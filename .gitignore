@@ -1,0 +1,10 @@
+*/.vs/
+.vs/
+*/packages/
+packages/
+*/Source/bin/
+Source/bin/
+*/Source/obj/
+Source/obj/
+*/Source/packages.config
+Source/packages.config
