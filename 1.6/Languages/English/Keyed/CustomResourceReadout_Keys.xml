@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+	<CustomResourceReadout_ResourceReadoutButtonTip>Change the resource readout mode.</CustomResourceReadout_ResourceReadoutButtonTip>
+	<CustomResourceReadout_CustomResourceReadoutModes>Custom resource readout modes</CustomResourceReadout_CustomResourceReadoutModes>
+	<CustomResourceReadout_AddNewMode>Add custom resource readout mode...</CustomResourceReadout_AddNewMode>
+	<CustomResourceReadout_EnterAUniqueName>Enter a unique name.</CustomResourceReadout_EnterAUniqueName>
+	<CustomResourceReadout_NameAlreadyExists>This name is already in use.</CustomResourceReadout_NameAlreadyExists>
+	<CustomResourceReadout_AddNewItem>Add resource readout item...</CustomResourceReadout_AddNewItem>
+</LanguageData>
