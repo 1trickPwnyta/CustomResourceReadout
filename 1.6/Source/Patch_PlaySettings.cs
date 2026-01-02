@@ -23,12 +23,33 @@ namespace CustomResourceReadout
 
         private static void DoResourceReadoutButton(WidgetRow row, ref bool _, Texture2D tex, string __, SoundDef mouseoverSound, string ___)
         {
-            if (row.ButtonIcon(tex, tooltip: "CustomResourceReadout_ResourceReadoutButtonTip".Translate()))
+            if (row.ButtonIcon(tex, tooltip: "CustomResourceReadout_ResourceReadoutButtonTip".Translate(CustomResourceReadoutSettings.CurrentModeLabel)))
             {
-                Find.WindowStack.Add(new FloatMenu(CustomResourceReadoutSettings.customModes.Select(m => new FloatMenuOption(m.name, () =>
+                Find.WindowStack.Add(new FloatMenu(new[]
                 {
-                    CustomResourceReadoutSettings.currentMode = m; // TODO Need to ensure this gets written to the config file at some point
-                })).ToList()));
+                    new FloatMenuOption("CustomResourceReadout_BasicUncategorized".Translate(), () =>
+                    {
+                        ChangeResourceReadout(ResourceReadoutModeType.Simple);
+                    }),
+                    new FloatMenuOption("CustomResourceReadout_BasicCategorized".Translate(), () =>
+                    {
+                        ChangeResourceReadout(ResourceReadoutModeType.Categorized);
+                    })
+                }.Concat(CustomResourceReadoutSettings.customModes.Select(m => new FloatMenuOption(m.name, () =>
+                {
+                    ChangeResourceReadout(ResourceReadoutModeType.Custom, m);
+                }))).ToList()));
+            } // TODO Need to ensure this gets written to the config file at some point
+        }
+
+        private static void ChangeResourceReadout(ResourceReadoutModeType type, ResourceReadoutMode mode = null)
+        {
+            CustomResourceReadoutSettings.modeType = type;
+            CustomResourceReadoutSettings.currentMode = mode;
+            ResourceCounter.ResetDefs();
+            foreach (Map map in Find.Maps)
+            {
+                map.resourceCounter.UpdateResourceCounts();
             }
         }
     }

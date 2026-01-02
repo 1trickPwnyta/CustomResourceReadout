@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <LanguageData>
-	<CustomResourceReadout_ResourceReadoutButtonTip>Change the resource readout mode.</CustomResourceReadout_ResourceReadoutButtonTip>
+	<CustomResourceReadout_ResourceReadoutButtonTip>Change the resource readout mode.\n\nCurrent mode: {0}</CustomResourceReadout_ResourceReadoutButtonTip>
 	<CustomResourceReadout_CustomResourceReadoutModes>Custom resource readout modes</CustomResourceReadout_CustomResourceReadoutModes>
 	<CustomResourceReadout_AddNewMode>Add custom resource readout mode...</CustomResourceReadout_AddNewMode>
 	<CustomResourceReadout_EnterAUniqueName>Enter a unique name.</CustomResourceReadout_EnterAUniqueName>
 	<CustomResourceReadout_NameAlreadyExists>This name is already in use.</CustomResourceReadout_NameAlreadyExists>
-	<CustomResourceReadout_AddNewItem>Add resource readout item...</CustomResourceReadout_AddNewItem>
+	<CustomResourceReadout_AddNewItem>Add resource readout items...</CustomResourceReadout_AddNewItem>
+	<CustomResourceReadout_AddResources>Select resources...</CustomResourceReadout_AddResources>
+	<CustomResourceReadout_AddCategories>Add categories...</CustomResourceReadout_AddCategories>
+	<CustomResourceReadout_AddEmptyCategory>Add empty category...</CustomResourceReadout_AddEmptyCategory>
+	<CustomResourceReadout_BasicUncategorized>Simple</CustomResourceReadout_BasicUncategorized>
+	<CustomResourceReadout_BasicCategorized>Categorized</CustomResourceReadout_BasicCategorized>
+	<CustomResourceReadout_ItemsInCategory>({0} items)</CustomResourceReadout_ItemsInCategory>
+	<CustomResourceReadout_SelectIcon>Select an icon.</CustomResourceReadout_SelectIcon>
 </LanguageData>

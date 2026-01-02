@@ -1,4 +1,5 @@
 using HarmonyLib;
+using RimWorld;
 using UnityEngine;
 using Verse;
 
@@ -10,6 +11,7 @@ namespace CustomResourceReadout
         static CustomResourceReadoutInitializer()
         {
             CustomResourceReadoutMod.Settings = CustomResourceReadoutMod.Mod.GetSettings<CustomResourceReadoutSettings>();
+            ResourceCounter.ResetDefs();
         }
     }
 

@@ -6,16 +6,36 @@ using Verse.Sound;
 
 namespace CustomResourceReadout
 {
+    public enum ResourceReadoutModeType
+    {
+        Simple,
+        Categorized,
+        Custom
+    }
+
     public class CustomResourceReadoutSettings : ModSettings
     {
         private static ResourceReadoutMode editingMode;
 
+        public static ResourceReadoutModeType modeType;
         public static ResourceReadoutMode currentMode;
         public static List<ResourceReadoutMode> customModes = new List<ResourceReadoutMode>();
 
         private static Vector2 scrollPositionLeft, scrollPositionRight;
         private static float heightLeft, heightRight;
-        private static QuickSearchWidget search = new QuickSearchWidget();
+
+        public static string CurrentModeLabel
+        {
+            get
+            {
+                switch (modeType)
+                {
+                    case ResourceReadoutModeType.Simple: return "CustomResourceReadout_BasicUncategorized".Translate();
+                    case ResourceReadoutModeType.Categorized: return "CustomResourceReadout_BasicCategorized".Translate();
+                    default: return currentMode.name;
+                }
+            }
+        }
 
         public static void DoSettingsWindowContents(Rect inRect)
         {
@@ -94,12 +114,18 @@ namespace CustomResourceReadout
 
             if (Widgets.ButtonText(right.BottomPartPixels(40f).ContractedBy(1f), "CustomResourceReadout_AddNewItem".Translate()))
             {
-                editingMode.items.Add(new ResourceReadoutLeaf(ThingDefOf.Boomshroom));
+                Find.WindowStack.Add(new FloatMenu(new[]
+                {
+                    new FloatMenuOption("CustomResourceReadout_AddResources".Translate(), () => Find.WindowStack.Add(new Dialog_SelectThingDefs(editingMode.items))),
+                    new FloatMenuOption("CustomResourceReadout_AddCategories".Translate(), () => Find.WindowStack.Add(new Dialog_AddThingCategoryDefs(editingMode.items))),
+                    new FloatMenuOption("CustomResourceReadout_AddEmptyCategory".Translate(), () => )
+                }));
             }
         }
 
         public override void ExposeData()
         {
+            Scribe_Values.Look(ref modeType, "modeType");
             Scribe_References.Look(ref currentMode, "currentMode");
             Scribe_Collections.Look(ref customModes, "customModes", LookMode.Deep);
             if (Scribe.mode == LoadSaveMode.PostLoadInit && customModes == null)

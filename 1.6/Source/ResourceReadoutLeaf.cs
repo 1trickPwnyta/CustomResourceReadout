@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using Verse;
 
 namespace CustomResourceReadout
@@ -37,6 +38,8 @@ namespace CustomResourceReadout
                 icon = Widgets.GetIconFor(def, stuff);
             }
         }
+
+        public IEnumerable<ThingDef> ThingDefs => new[] { def };
 
         public Texture2D Icon => icon;
 
