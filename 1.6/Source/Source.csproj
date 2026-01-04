@@ -64,6 +64,9 @@
     <Compile Include="CustomResourceReadoutSettings.cs" />
     <Compile Include="Dialog_RenameResourceReadoutMode.cs" />
     <Compile Include="Dialog_SelectDefs.cs" />
+    <Compile Include="Dialog_AddThingCategoryDefs.cs" />
+    <Compile Include="Dialog_SelectIcon.cs" />
+    <Compile Include="Dialog_SelectThingDefs.cs" />
     <Compile Include="IResourceReadoutItem.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Patch_PlaySettings.cs" />

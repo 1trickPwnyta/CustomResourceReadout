@@ -43,7 +43,7 @@ namespace CustomResourceReadout
 
         public Texture2D Icon => icon;
 
-        public float DoSettingsInterface(Rect rect)
+        public float DoSettingsInterface(Rect rect, ResourceReadoutCategory parentCategory = null)
         {
             rect.height = 24f;
             Rect iconRect = rect.LeftPartPixels(rect.height);

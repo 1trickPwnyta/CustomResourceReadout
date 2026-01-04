@@ -1,5 +1,6 @@
 ﻿using RimWorld;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Verse;
 using Verse.Sound;
@@ -16,6 +17,7 @@ namespace CustomResourceReadout
     public class CustomResourceReadoutSettings : ModSettings
     {
         private static ResourceReadoutMode editingMode;
+        public static IResourceReadoutItem deletedItem;
 
         public static ResourceReadoutModeType modeType;
         public static ResourceReadoutMode currentMode;
@@ -78,6 +80,7 @@ namespace CustomResourceReadout
                 if (Widgets.ButtonInvisible(innerRect))
                 {
                     editingMode = mode;
+                    SoundDefOf.Click.PlayOneShot(null);
                 }
                 modeRect.y += modeRect.height;
             }
@@ -108,6 +111,11 @@ namespace CustomResourceReadout
             {
                 itemRect.y += item.DoSettingsInterface(itemRect);
             }
+            if (deletedItem != null)
+            {
+                editingMode.items.Remove(deletedItem);
+                deletedItem = null;
+            }
 
             Widgets.EndScrollView();
             heightRight = itemRect.y;
@@ -118,8 +126,11 @@ namespace CustomResourceReadout
                 {
                     new FloatMenuOption("CustomResourceReadout_AddResources".Translate(), () => Find.WindowStack.Add(new Dialog_SelectThingDefs(editingMode.items))),
                     new FloatMenuOption("CustomResourceReadout_AddCategories".Translate(), () => Find.WindowStack.Add(new Dialog_AddThingCategoryDefs(editingMode.items))),
-                    new FloatMenuOption("CustomResourceReadout_AddEmptyCategory".Translate(), () => )
-                }));
+                    new FloatMenuOption("CustomResourceReadout_AddEmptyCategory".Translate(), () => Find.WindowStack.Add(new Dialog_SelectIcon("CustomResourceReadout_AddEmptyCategory".Translate(), (p, c) =>
+                    {
+                        editingMode.items.Add(new ResourceReadoutCategory(p, c));
+                    })))
+                }.ToList()));
             }
         }
 

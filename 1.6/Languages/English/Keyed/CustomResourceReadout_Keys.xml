@@ -13,4 +13,5 @@
 	<CustomResourceReadout_BasicCategorized>Categorized</CustomResourceReadout_BasicCategorized>
 	<CustomResourceReadout_ItemsInCategory>({0} items)</CustomResourceReadout_ItemsInCategory>
 	<CustomResourceReadout_SelectIcon>Select an icon.</CustomResourceReadout_SelectIcon>
+	<CustomResourceReadout_SelectColor>Icon color: </CustomResourceReadout_SelectColor>
 </LanguageData>

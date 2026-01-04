@@ -10,6 +10,6 @@ namespace CustomResourceReadout
 
         Texture2D Icon { get; }
 
-        float DoSettingsInterface(Rect rect);
+        float DoSettingsInterface(Rect rect, ResourceReadoutCategory parentCategory = null);
     }
 }

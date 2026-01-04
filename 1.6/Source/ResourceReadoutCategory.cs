@@ -12,8 +12,10 @@ namespace CustomResourceReadout
         private bool expanded;
         private bool uiExpanded;
         private string iconPath;
+        private Color iconColor;
         private Texture2D icon;
         public List<IResourceReadoutItem> items = new List<IResourceReadoutItem>();
+        public IResourceReadoutItem deletedItem;
 
         public IEnumerable<ThingDef> ThingDefs => items.SelectMany(i => i.ThingDefs);
 
@@ -31,12 +33,13 @@ namespace CustomResourceReadout
 
         public ResourceReadoutCategory() { }
 
-        public ResourceReadoutCategory(string iconPath) : this()
+        public ResourceReadoutCategory(string iconPath, Color iconColor) : this()
         {
             this.iconPath = iconPath;
+            this.iconColor = iconColor;
         }
 
-        public ResourceReadoutCategory(ThingCategoryDef category) : this(category.iconPath)
+        public ResourceReadoutCategory(ThingCategoryDef category) : this(category.iconPath, Color.white)
         {
             foreach (ThingCategoryDef childCategory in category.childCategories)
             {
@@ -48,9 +51,11 @@ namespace CustomResourceReadout
             }
         }
 
-        public float DoSettingsInterface(Rect rect)
+        public float DoSettingsInterface(Rect rect, ResourceReadoutCategory parentCategory = null)
         {
             rect.height = 24f;
+            Widgets.DrawHighlightIfMouseover(rect);
+
             Rect expandRect = rect.LeftPartPixels(rect.height);
             if (Widgets.ButtonImage(expandRect.ContractedBy(2f), uiExpanded ? TexButton.Collapse : TexButton.Reveal))
             {
@@ -59,9 +64,35 @@ namespace CustomResourceReadout
             }
             Rect iconRect = expandRect;
             iconRect.x += iconRect.width;
-            GUI.DrawTexture(iconRect.ContractedBy(1f), Icon);
-            Rect labelRect = rect.RightPartPixels(rect.width - iconRect.xMax);
+            GUI.DrawTexture(iconRect.ContractedBy(1f), Icon, ScaleMode.ScaleToFit, true, 1f, iconColor, 0f, 0f);
+            Rect labelRect = rect.RightPartPixels(rect.width - iconRect.width - expandRect.width);
             using (new TextBlock(TextAnchor.MiddleLeft)) Widgets.Label(labelRect, "CustomResourceReadout_ItemsInCategory".Translate(items.Count));
+            
+            if (Widgets.ButtonInvisible(rect))
+            {
+                Find.WindowStack.Add(new FloatMenu(new[]
+                {
+                    new FloatMenuOption("CustomResourceReadout_AddResources".Translate(), () => Find.WindowStack.Add(new Dialog_SelectThingDefs(items))),
+                    new FloatMenuOption("CustomResourceReadout_AddCategories".Translate(), () => Find.WindowStack.Add(new Dialog_AddThingCategoryDefs(items))),
+                    new FloatMenuOption("CustomResourceReadout_AddEmptyCategory".Translate(), () => Find.WindowStack.Add(new Dialog_SelectIcon("CustomResourceReadout_AddEmptyCategory".Translate(), (p, c) =>
+                    {
+                        items.Add(new ResourceReadoutCategory(p, c));
+                    }))),
+                    new FloatMenuOption("Delete".Translate(), () =>
+                    {
+                        if (parentCategory != null)
+                        {
+                            parentCategory.deletedItem = this;
+                        }
+                        else
+                        {
+                            CustomResourceReadoutSettings.deletedItem = this;
+                        }
+                    })
+                }.ToList()));
+            }
+
+            float y = rect.y;
             if (uiExpanded)
             {
                 rect.xMin += 24f;
@@ -69,16 +100,23 @@ namespace CustomResourceReadout
                 rect.height = 0f;
                 foreach (IResourceReadoutItem item in items)
                 {
-                    rect.y += item.DoSettingsInterface(rect);
+                    rect.y += item.DoSettingsInterface(rect, this);
+                }
+                if (deletedItem != null)
+                {
+                    items.Remove(deletedItem);
+                    deletedItem = null;
                 }
             }
-            return rect.y + rect.height;
+
+            return rect.yMax - y;
         }
 
         public void ExposeData()
         {
             Scribe_Values.Look(ref expanded, "expanded");
             Scribe_Values.Look(ref iconPath, "iconPath");
+            Scribe_Values.Look(ref iconColor, "iconColor");
             Scribe_Collections.Look(ref items, "items", LookMode.Deep);
             if (Scribe.mode == LoadSaveMode.PostLoadInit && items == null)
             {
