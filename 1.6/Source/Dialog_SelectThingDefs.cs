@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using RimWorld;
+using System.Collections.Generic;
 using UnityEngine;
 using Verse;
 
@@ -10,9 +11,16 @@ namespace CustomResourceReadout
         {
         }
 
-        protected override bool DefAllowed(ThingDef def) => def.EverStorable(true);
+        protected override bool DefAllowed(ThingDef def)
+        {
+            Texture2D icon = Widgets.GetIconFor(def);
+            return icon != null && icon != BaseContent.BadTex && !def.IsCorpse && def.EverStorable(true);
+        }
 
-        protected override Texture2D GetIcon(ThingDef def) => Widgets.GetIconFor(def);
+        protected override void DoIcon(Rect rect, ThingDef def)
+        {
+            Widgets.DefIcon(rect, def, GenStuff.DefaultStuffFor(def));
+        }
 
         protected override bool HasDef(List<ResourceReadoutItem> items, ThingDef def) => items.Any(i => i is ResourceReadoutLeaf l && l.Def == def);
 

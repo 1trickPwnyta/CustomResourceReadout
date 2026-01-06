@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using RimWorld;
+using System.Collections.Generic;
 using UnityEngine;
 using Verse;
 
@@ -7,15 +8,17 @@ namespace CustomResourceReadout
     public class ResourceReadoutLeaf : ResourceReadoutItem, IExposable
     {
         private ThingDef def;
-        private ThingDef stuff;
-        private Texture2D icon;
+        public ThingDef stuff;
 
         public ResourceReadoutLeaf() { }
 
         public ResourceReadoutLeaf(ThingDef def, ThingDef stuff = null) : this()
         {
             Def = def;
-            Stuff = stuff;
+            if (stuff != null)
+            {
+                this.stuff = stuff;
+            }
         }
 
         public ThingDef Def
@@ -24,29 +27,16 @@ namespace CustomResourceReadout
             set
             {
                 def = value;
-                stuff = def.defaultStuff;
-                icon = Widgets.GetIconFor(def, stuff);
-            }
-        }
-
-        public ThingDef Stuff
-        {
-            get => stuff;
-            set
-            {
-                stuff = value;
-                icon = Widgets.GetIconFor(def, stuff);
+                stuff = GenStuff.DefaultStuffFor(def);
             }
         }
 
         public override IEnumerable<ThingDef> ThingDefs => new[] { def };
 
-        public override Texture2D Icon => icon;
-
         protected override float DoSettingsInterfaceSub(Rect rect)
         {
             Rect iconRect = rect.LeftPartPixels(rect.height);
-            GUI.DrawTexture(iconRect.ContractedBy(1f), Icon);
+            Widgets.DefIcon(iconRect.ContractedBy(1f), def, stuff);
             Rect labelRect = rect.RightPartPixels(rect.width - iconRect.width);
             using (new TextBlock(TextAnchor.MiddleLeft)) Widgets.Label(labelRect, def.LabelCap);
             return rect.height;
@@ -56,10 +46,6 @@ namespace CustomResourceReadout
         {
             Scribe_Defs.Look(ref def, "def");
             Scribe_Defs.Look(ref stuff, "stuff");
-            if (Scribe.mode == LoadSaveMode.LoadingVars)
-            {
-                icon = Widgets.GetIconFor(def, stuff);
-            }
         }
     }
 }

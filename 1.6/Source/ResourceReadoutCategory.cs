@@ -19,11 +19,11 @@ namespace CustomResourceReadout
 
         public override IEnumerable<ThingDef> ThingDefs => items.SelectMany(i => i.ThingDefs);
 
-        public override Texture2D Icon
+        public Texture2D Icon
         {
             get
             {
-                if (icon == null)
+                if (icon == null && iconPath != null)
                 {
                     icon = ContentFinder<Texture2D>.Get(iconPath);
                 }
@@ -39,6 +39,9 @@ namespace CustomResourceReadout
             {
                 items.Add(new ResourceReadoutCategory(p, c));
             })))
+            // TODO Allow changing the icon
+            // TODO Allow searching icons
+            // TODO Allow changing a leaf's stuff if other stuff is available for it
         };
 
         public override IEnumerable<ResourceReadoutItem> DraggableItems => uiExpanded ? base.DraggableItems.Concat(items.SelectMany(i => i.DraggableItems)) : base.DraggableItems;
@@ -63,6 +66,19 @@ namespace CustomResourceReadout
             }
         }
 
+        public bool Accepts(ResourceReadoutItem item)
+        {
+            if (item == this || parent?.Accepts(item) == false)
+            {
+                return false;
+            }
+            if (item is ResourceReadoutLeaf leaf && items.OfType<ResourceReadoutLeaf>().Any(l => l != leaf && l.Def == leaf.Def))
+            {
+                return false;
+            }
+            return true;
+        }
+
         protected override void OnDragOver(Rect rect)
         {
             if (CustomResourceReadoutSettings.draggedItem != this && Mouse.IsOver(rect.MiddlePart(1f, 0.5f)))
@@ -82,7 +98,12 @@ namespace CustomResourceReadout
             }
             Rect iconRect = expandRect;
             iconRect.x += iconRect.width;
-            GUI.DrawTexture(iconRect.ContractedBy(1f), Icon, ScaleMode.ScaleToFit, true, 1f, iconColor, 0f, 0f);
+            if (Icon != null)
+            {
+                GUI.color = iconColor;
+                Widgets.DrawTextureFitted(iconRect.ContractedBy(1f), Icon, 1f);
+                GUI.color = Color.white;
+            }
             Rect labelRect = rect.RightPartPixels(rect.width - iconRect.width - expandRect.width);
             using (new TextBlock(TextAnchor.MiddleLeft)) Widgets.Label(labelRect, "CustomResourceReadout_ItemsInCategory".Translate(items.Count));
 

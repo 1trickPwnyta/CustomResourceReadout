@@ -15,9 +15,12 @@ namespace CustomResourceReadout
             this.items = items;
         }
 
-        protected override bool DefAllowed(ThingCategoryDef def) => true;
+        protected override bool DefAllowed(ThingCategoryDef def) => def.icon != null && def.icon != BaseContent.BadTex;
 
-        protected override Texture2D GetIcon(ThingCategoryDef def) => def.icon;
+        protected override void DoIcon(Rect rect, ThingCategoryDef def)
+        {
+            GUI.DrawTexture(rect, def.icon);
+        }
 
         protected override bool HasDef(List<ResourceReadoutItem> items, ThingCategoryDef def) => selectedDefs.Contains(def);
 

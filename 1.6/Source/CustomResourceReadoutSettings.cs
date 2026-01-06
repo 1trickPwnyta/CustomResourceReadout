@@ -113,10 +113,10 @@ namespace CustomResourceReadout
                 {
                     if (draggedItem != null && dropIntoCategory == null)
                     {
-                        // TODO Don't allow duplicate leafs
                         List<ResourceReadoutItem> draggableItems = editingMode.items.SelectMany(i => i.DraggableItems).ToList();
-                        if (to < draggableItems.Count && draggableItems[to].parent == draggedItem)
+                        if (to < draggableItems.Count && draggableItems[to].parent?.Accepts(draggedItem) == false)
                         {
+                            SoundDefOf.ClickReject.PlayOneShot(null);
                             return;
                         }
 
@@ -184,20 +184,25 @@ namespace CustomResourceReadout
 
         public static void OnDragEnd()
         {
-            // TODO Don't allow circular parentage
-            // TODO Don't allow duplicate leafs
-            if (dropIntoCategory != null && draggedItem != null && dropIntoCategory != draggedItem && editingMode != null)
+            if (dropIntoCategory != null && draggedItem != null && editingMode != null)
             {
-                if (draggedItem.parent != null)
+                if (dropIntoCategory.Accepts(draggedItem))
                 {
-                    draggedItem.parent.items.Remove(draggedItem);
+                    if (draggedItem.parent != null)
+                    {
+                        draggedItem.parent.items.Remove(draggedItem);
+                    }
+                    else
+                    {
+                        editingMode.items.Remove(draggedItem);
+                    }
+                    dropIntoCategory.items.Add(draggedItem);
+                    draggedItem.parent = dropIntoCategory;
                 }
                 else
                 {
-                    editingMode.items.Remove(draggedItem);
+                    SoundDefOf.ClickReject.PlayOneShot(null);
                 }
-                dropIntoCategory.items.Add(draggedItem);
-                draggedItem.parent = dropIntoCategory;
             }
         }
 
@@ -206,9 +211,13 @@ namespace CustomResourceReadout
             Scribe_Values.Look(ref modeType, "modeType");
             Scribe_References.Look(ref currentMode, "currentMode");
             Scribe_Collections.Look(ref customModes, "customModes", LookMode.Deep);
-            if (Scribe.mode == LoadSaveMode.PostLoadInit && customModes == null)
+            if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {
-                customModes = new List<ResourceReadoutMode>();
+                if (customModes == null)
+                {
+                    customModes = new List<ResourceReadoutMode>();
+                }
+                editingMode = customModes.FirstOrDefault();
             }
         }
     }

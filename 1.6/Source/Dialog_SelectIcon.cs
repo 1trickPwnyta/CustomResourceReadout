@@ -12,13 +12,13 @@ namespace CustomResourceReadout
     {
         private static List<string> iconPathList = 
             DefDatabase<ThingCategoryDef>.AllDefsListForReading.Select(d => d.iconPath)
-            .Concat(DefDatabase<ThingDef>.AllDefsListForReading.Select(d => d.uiIconPath))
+            .Concat(DefDatabase<ThingDef>.AllDefsListForReading.Select(d => d.uiIconPath ?? (d.graphicData?.graphicClass == typeof(Graphic_Single) ? d.graphicData.texPath : null)))
             .Concat(DefDatabase<FactionDef>.AllDefsListForReading.Select(d => d.factionIconPath))
             .Concat(DefDatabase<IdeoIconDef>.AllDefsListForReading.Select(d => d.iconPath))
             .Concat(DefDatabase<StyleCategoryDef>.AllDefsListForReading.Select(d => d.iconPath))
             .Where(p => !p.NullOrEmpty()).Distinct().ToList();
         private static Dictionary<string, Texture2D> icons;
-        private static List<Color> colors = Enumerable.Range(0, 32).Select(i => Color.HSVToRGB(i / 32f, 0.7f, 1f)).ToList();
+        private static List<Color> colors = new[] { Color.white, Color.black }.Concat(Enumerable.Range(0, 32).Select(i => Color.HSVToRGB(i / 32f, 0.7f, 1f))).ToList();
 
         private string title;
         private Action<string, Color> callback;
@@ -81,7 +81,11 @@ namespace CustomResourceReadout
                 {
                     Widgets.DrawBoxSolidWithOutline(iconRect, Widgets.MenuSectionBGFillColor, Widgets.SeparatorLineColor, 2);
                 }
-                GUI.DrawTexture(iconRect.ContractedBy(viewRect.width / 48), icons[iconPath], ScaleMode.ScaleToFit, true, 1f, selectedIconColor, 0f, 0f);
+
+                GUI.color = selectedIconColor;
+                Widgets.DrawTextureFitted(iconRect.ContractedBy(viewRect.width / 48), icons[iconPath], 1f);
+                GUI.color = Color.white;
+
                 Widgets.DrawHighlightIfMouseover(iconRect);
                 if (Widgets.ButtonInvisible(iconRect))
                 {

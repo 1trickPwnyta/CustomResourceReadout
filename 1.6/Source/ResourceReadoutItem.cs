@@ -11,8 +11,6 @@ namespace CustomResourceReadout
 
         public abstract IEnumerable<ThingDef> ThingDefs { get; }
 
-        public abstract Texture2D Icon { get; }
-
         protected virtual float SettingsInterfaceInteractionRectHeight => 24f;
 
         public virtual IEnumerable<ResourceReadoutItem> DraggableItems => new[] { this };
@@ -49,7 +47,7 @@ namespace CustomResourceReadout
 
             float height = DoSettingsInterfaceSub(rect);
 
-            if (Event.current.button == 2 && Widgets.ButtonInvisible(rect))
+            if (Event.current.button == 1 && Widgets.ButtonInvisible(rect))
             {
                 Find.WindowStack.Add(new FloatMenu(FloatMenuOptions.Concat(new[]
                 {
