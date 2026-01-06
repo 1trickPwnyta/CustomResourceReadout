@@ -13,9 +13,15 @@ namespace CustomResourceReadout
 
         protected virtual float SettingsInterfaceInteractionRectHeight => 24f;
 
-        public virtual IEnumerable<ResourceReadoutItem> DraggableItems => new[] { this };
+        public virtual IEnumerable<ResourceReadoutItem> DraggableItems
+        {
+            get { yield return this; }
+        }
 
-        protected virtual IEnumerable<FloatMenuOption> FloatMenuOptions => new FloatMenuOption[0];
+        protected virtual IEnumerable<FloatMenuOption> FloatMenuOptions
+        {
+            get { yield break; }
+        }
 
         public ResourceReadoutItem(ResourceReadoutCategory parent = null)
         {
@@ -39,7 +45,7 @@ namespace CustomResourceReadout
                 OnDragOver(rect);
             }
 
-            if ((Event.current.type != EventType.MouseDown || Mouse.IsOver(rect)) && ReorderableWidget.Reorderable(CustomResourceReadoutSettings.reorderableGroup, rect))
+            if ((Event.current.type != EventType.MouseDown || Mouse.IsOver(rect)) && ReorderableWidget.Reorderable(CustomResourceReadoutSettings.reorderableItemGroup, rect))
             {
                 CustomResourceReadoutSettings.draggedItem = this;
                 Widgets.DrawRectFast(rect, Color.black.WithAlpha(0.5f));

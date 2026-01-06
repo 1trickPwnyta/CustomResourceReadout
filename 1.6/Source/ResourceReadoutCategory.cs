@@ -25,24 +25,37 @@ namespace CustomResourceReadout
             {
                 if (icon == null && iconPath != null)
                 {
-                    icon = ContentFinder<Texture2D>.Get(iconPath);
+                    try
+                    {
+                        icon = ContentFinder<Texture2D>.Get(iconPath);
+                    }
+                    catch
+                    {
+                        icon = BaseContent.BadTex;
+                    }
                 }
                 return icon;
             }
         }
 
-        protected override IEnumerable<FloatMenuOption> FloatMenuOptions => new[]
+        protected override IEnumerable<FloatMenuOption> FloatMenuOptions
         {
-            new FloatMenuOption("CustomResourceReadout_AddResources".Translate(), () => Find.WindowStack.Add(new Dialog_SelectThingDefs(items))),
-            new FloatMenuOption("CustomResourceReadout_AddCategories".Translate(), () => Find.WindowStack.Add(new Dialog_AddThingCategoryDefs(items))),
-            new FloatMenuOption("CustomResourceReadout_AddEmptyCategory".Translate(), () => Find.WindowStack.Add(new Dialog_SelectIcon("CustomResourceReadout_AddEmptyCategory".Translate(), (p, c) =>
+            get
             {
-                items.Add(new ResourceReadoutCategory(p, c));
-            })))
-            // TODO Allow changing the icon
-            // TODO Allow searching icons
-            // TODO Allow changing a leaf's stuff if other stuff is available for it
-        };
+                yield return new FloatMenuOption("CustomResourceReadout_AddResources".Translate(), () => Find.WindowStack.Add(new Dialog_SelectThingDefs(items)));
+                yield return new FloatMenuOption("CustomResourceReadout_AddCategories".Translate(), () => Find.WindowStack.Add(new Dialog_AddThingCategoryDefs(items)));
+                yield return new FloatMenuOption("CustomResourceReadout_AddEmptyCategory".Translate(), () => Find.WindowStack.Add(new Dialog_SelectIcon("CustomResourceReadout_AddEmptyCategory".Translate(), (p, c) =>
+                {
+                    items.Add(new ResourceReadoutCategory(p, c));
+                })));
+                yield return new FloatMenuOption("CustomResourceReadout_EditIcon".Translate(), () => Find.WindowStack.Add(new Dialog_SelectIcon("CustomResourceReadout_EditIcon".Translate(), (p, c) =>
+                {
+                    iconPath = p;
+                    icon = null;
+                    iconColor = c;
+                }, iconPath, iconColor)));
+            }
+        }
 
         public override IEnumerable<ResourceReadoutItem> DraggableItems => uiExpanded ? base.DraggableItems.Concat(items.SelectMany(i => i.DraggableItems)) : base.DraggableItems;
 
@@ -66,17 +79,13 @@ namespace CustomResourceReadout
             }
         }
 
-        public bool Accepts(ResourceReadoutItem item)
+        public bool CanAccept(ResourceReadoutItem item)
         {
-            if (item == this || parent?.Accepts(item) == false)
+            if (item == this || parent?.CanAccept(item) == false)
             {
                 return false;
             }
-            if (item is ResourceReadoutLeaf leaf && items.OfType<ResourceReadoutLeaf>().Any(l => l != leaf && l.Def == leaf.Def))
-            {
-                return false;
-            }
-            return true;
+            return items.CanAccept(item);
         }
 
         protected override void OnDragOver(Rect rect)

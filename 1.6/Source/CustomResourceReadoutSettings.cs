@@ -16,11 +16,13 @@ namespace CustomResourceReadout
 
     public class CustomResourceReadoutSettings : ModSettings
     {
-        private static ResourceReadoutMode editingMode;
+        public static ResourceReadoutMode editingMode;
         public static ResourceReadoutItem deletedItem;
         private static Vector2 scrollPositionLeft, scrollPositionRight;
         private static float heightLeft, heightRight;
-        public static int reorderableGroup;
+        private static int reorderableModeGroup;
+        public static int reorderableItemGroup;
+        private static ResourceReadoutMode draggedMode;
         public static ResourceReadoutItem draggedItem;
         public static ResourceReadoutCategory dropIntoCategory;
 
@@ -56,18 +58,42 @@ namespace CustomResourceReadout
 
             Rect outRect = left;
             outRect.yMin += 30f;
-            outRect.yMax -= 40f;
+            outRect.yMax -= 80f;
             Rect viewRect = new Rect(0f, 0f, left.width - 20f, heightLeft);
-            Widgets.BeginScrollView(outRect, ref scrollPositionLeft, viewRect);
 
+            if (Event.current.type == EventType.Repaint)
+            {
+                reorderableModeGroup = ReorderableWidget.NewGroup((from, to) =>
+                {
+                    ResourceReadoutMode mode = customModes[from];
+                    customModes.Insert(to, mode);
+                    customModes.RemoveAt(from < to ? from : from + 1);
+                }, ReorderableDirection.Vertical, outRect);
+            }
+
+            Widgets.BeginScrollView(outRect, ref scrollPositionLeft, viewRect);
+            
             Rect modeRect = new Rect(viewRect.x, viewRect.y, viewRect.width, 30f);
             ResourceReadoutMode deletedMode = null;
             foreach (ResourceReadoutMode mode in customModes)
             {
                 Rect innerRect = modeRect.ContractedBy(1f);
-                Widgets.DrawRectFast(innerRect, Widgets.MenuSectionBGFillColor);
+                if (editingMode == mode)
+                {
+                    Widgets.DrawHighlightSelected(innerRect);
+                }
                 using (new TextBlock(TextAnchor.MiddleLeft)) Widgets.Label(innerRect.ContractedBy(2f), mode.name);
-                Widgets.DrawHighlightIfMouseover(innerRect);
+
+                if (!ReorderableWidget.Dragging)
+                {
+                    Widgets.DrawHighlightIfMouseover(innerRect);
+                }
+                if ((Event.current.type != EventType.MouseDown || Mouse.IsOver(innerRect)) && ReorderableWidget.Reorderable(reorderableModeGroup, modeRect))
+                {
+                    draggedMode = mode;
+                    Widgets.DrawRectFast(innerRect, Color.black.WithAlpha(0.5f));
+                }
+
                 Rect buttonRect = innerRect.RightPartPixels(innerRect.height);
                 if (Widgets.ButtonImage(buttonRect.ContractedBy(1f), TexButton.Delete))
                 {
@@ -75,10 +101,16 @@ namespace CustomResourceReadout
                     deletedMode = mode;
                 }
                 buttonRect.x -= buttonRect.width;
+                if (Widgets.ButtonImage(buttonRect.ContractedBy(1f), TexButton.Save))
+                {
+                    Find.WindowStack.Add(new Dialog_ExportResourceReadoutMode(mode));
+                }
+                buttonRect.x -= buttonRect.width;
                 if (Widgets.ButtonImage(buttonRect.ContractedBy(1f), TexButton.Rename))
                 {
                     Find.WindowStack.Add(new Dialog_RenameResourceReadoutMode(mode));
                 }
+
                 if (Widgets.ButtonInvisible(innerRect))
                 {
                     editingMode = mode;
@@ -89,15 +121,30 @@ namespace CustomResourceReadout
             if (deletedMode != null)
             {
                 customModes.Remove(deletedMode);
+                if (editingMode == deletedMode)
+                {
+                    editingMode = null;
+                }
             }
 
             Widgets.EndScrollView();
             heightLeft = modeRect.y;
 
-            if (Widgets.ButtonText(left.BottomPartPixels(40f).ContractedBy(1f), "CustomResourceReadout_AddNewMode".Translate()))
+            Rect bottomRect = left.BottomPartPixels(80f);
+            bottomRect.height = 40f;
+            if (Widgets.ButtonText(bottomRect.ContractedBy(1f), "CustomResourceReadout_AddNewMode".Translate()))
             {
                 ResourceReadoutMode mode = new ResourceReadoutMode("CustomResourceReadout_EnterAUniqueName".Translate());
-                Find.WindowStack.Add(new Dialog_RenameResourceReadoutMode(mode, () => customModes.Add(mode)));
+                Find.WindowStack.Add(new Dialog_RenameResourceReadoutMode(mode, () =>
+                {
+                    customModes.Add(mode);
+                    editingMode = mode;
+                }));
+            }
+            bottomRect.y += bottomRect.height;
+            if (Widgets.ButtonText(bottomRect.ContractedBy(1f), "CustomResourceReadout_ImportMode".Translate()))
+            {
+                Find.WindowStack.Add(new Dialog_ImportResourceReadoutMode());
             }
         }
 
@@ -109,12 +156,24 @@ namespace CustomResourceReadout
 
             if (Event.current.type == EventType.Repaint)
             {
-                reorderableGroup = ReorderableWidget.NewGroup((_, to) =>
+                reorderableItemGroup = ReorderableWidget.NewGroup((_, to) =>
                 {
                     if (draggedItem != null && dropIntoCategory == null)
                     {
                         List<ResourceReadoutItem> draggableItems = editingMode.items.SelectMany(i => i.DraggableItems).ToList();
-                        if (to < draggableItems.Count && draggableItems[to].parent?.Accepts(draggedItem) == false)
+                        bool accepted = true;
+                        if (to < draggableItems.Count && draggableItems[to].parent?.CanAccept(draggedItem) == false)
+                        {
+                            accepted = false;
+                        }
+                        if (to >= draggableItems.Count || draggableItems[to].parent == null)
+                        {
+                            if (!editingMode.items.CanAccept(draggedItem))
+                            {
+                                accepted = false;
+                            }
+                        }
+                        if (!accepted)
                         {
                             SoundDefOf.ClickReject.PlayOneShot(null);
                             return;
@@ -186,7 +245,7 @@ namespace CustomResourceReadout
         {
             if (dropIntoCategory != null && draggedItem != null && editingMode != null)
             {
-                if (dropIntoCategory.Accepts(draggedItem))
+                if (dropIntoCategory.CanAccept(draggedItem))
                 {
                     if (draggedItem.parent != null)
                     {

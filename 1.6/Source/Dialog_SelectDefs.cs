@@ -25,6 +25,10 @@ namespace CustomResourceReadout
             closeOnClickedOutside = true;
         }
 
+        protected virtual bool AllowNull => false;
+
+        protected virtual void OnSelectNull(List<ResourceReadoutItem> items, bool selected) { }
+
         protected abstract bool DefAllowed(T def);
 
         protected abstract void DoIcon(Rect rect, T def);
@@ -49,7 +53,12 @@ namespace CustomResourceReadout
 
             Rect defRect = new Rect(viewRect.x, viewRect.y, viewRect.width, 24f);
             bool shaded = false;
-            foreach (T def in DefDatabase<T>.AllDefsListForReading.Where(d => DefAllowed(d) && search.filter.Matches(d.defName + d.label)))
+            IEnumerable<T> defs = DefDatabase<T>.AllDefsListForReading.Where(d => DefAllowed(d) && search.filter.Matches(d.defName + d.label));
+            if (AllowNull)
+            {
+                defs = defs.Prepend(null);
+            }
+            foreach (T def in defs)
             {
                 if (shaded)
                 {
@@ -57,22 +66,29 @@ namespace CustomResourceReadout
                 }
 
                 Rect iconRect = defRect.LeftPartPixels(defRect.height);
-                DoIcon(iconRect.ContractedBy(1f), def);
+                if (def != null)
+                {
+                    DoIcon(iconRect.ContractedBy(1f), def);
+                }
 
                 Rect checkRect = defRect.RightPartPixels(defRect.height);
                 bool included = HasDef(items, def);
                 Widgets.CheckboxDraw(checkRect.x + 1f, checkRect.y + 1, included, false, defRect.height - 2f);
 
                 Rect labelRect = defRect.MiddlePartPixels(defRect.width - iconRect.width - checkRect.width, defRect.height);
-                using (new TextBlock(TextAnchor.MiddleLeft)) Widgets.Label(labelRect, def.LabelCap);
+                using (new TextBlock(TextAnchor.MiddleLeft)) Widgets.Label(labelRect, def?.LabelCap ?? "CustomResourceReadout_Any".Translate());
 
                 Widgets.DrawHighlightIfMouseover(defRect);
                 bool wasIncluded = included;
-                Widgets.ToggleInvisibleDraggable(defRect, ref included, true, true);
+                Widgets.ToggleInvisibleDraggable(defRect, ref included, true, def != null);
                 if (included != wasIncluded)
                 {
                     if (included)
                     {
+                        if (AllowNull)
+                        {
+                            OnSelectNull(items, def == null);
+                        }
                         AddDef(items, def);
                         SoundDefOf.Tick_High.PlayOneShot(null);
                     }
@@ -87,7 +103,6 @@ namespace CustomResourceReadout
                 shaded = !shaded;
             }
             height = defRect.y;
-
             Widgets.EndScrollView();
 
             if (!focusedSearch)

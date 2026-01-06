@@ -2,16 +2,23 @@
 <LanguageData>
 	<CustomResourceReadout_ResourceReadoutButtonTip>Change the resource readout mode.\n\nCurrent mode: {0}</CustomResourceReadout_ResourceReadoutButtonTip>
 	<CustomResourceReadout_CustomResourceReadoutModes>Custom resource readout modes</CustomResourceReadout_CustomResourceReadoutModes>
-	<CustomResourceReadout_AddNewMode>Add custom resource readout mode...</CustomResourceReadout_AddNewMode>
+	<CustomResourceReadout_AddNewMode>Add resource readout mode</CustomResourceReadout_AddNewMode>
 	<CustomResourceReadout_EnterAUniqueName>Enter a unique name.</CustomResourceReadout_EnterAUniqueName>
 	<CustomResourceReadout_NameAlreadyExists>This name is already in use.</CustomResourceReadout_NameAlreadyExists>
-	<CustomResourceReadout_AddNewItem>Add resource readout items...</CustomResourceReadout_AddNewItem>
-	<CustomResourceReadout_AddResources>Select resources...</CustomResourceReadout_AddResources>
-	<CustomResourceReadout_AddCategories>Add categories...</CustomResourceReadout_AddCategories>
-	<CustomResourceReadout_AddEmptyCategory>Add empty category...</CustomResourceReadout_AddEmptyCategory>
+	<CustomResourceReadout_AddNewItem>Add resource readout items</CustomResourceReadout_AddNewItem>
+	<CustomResourceReadout_AddResources>Select resources</CustomResourceReadout_AddResources>
+	<CustomResourceReadout_AddCategories>Add categories</CustomResourceReadout_AddCategories>
+	<CustomResourceReadout_AddEmptyCategory>Add custom category</CustomResourceReadout_AddEmptyCategory>
 	<CustomResourceReadout_BasicUncategorized>Simple</CustomResourceReadout_BasicUncategorized>
 	<CustomResourceReadout_BasicCategorized>Categorized</CustomResourceReadout_BasicCategorized>
 	<CustomResourceReadout_ItemsInCategory>({0} items)</CustomResourceReadout_ItemsInCategory>
 	<CustomResourceReadout_SelectIcon>Select an icon.</CustomResourceReadout_SelectIcon>
 	<CustomResourceReadout_SelectColor>Icon color: </CustomResourceReadout_SelectColor>
+	<CustomResourceReadout_EditIcon>Edit icon</CustomResourceReadout_EditIcon>
+	<CustomResourceReadout_ChangeStuff>Select stuff</CustomResourceReadout_ChangeStuff>
+	<CustomResourceReadout_Any>Any</CustomResourceReadout_Any>
+	<CustomResourceReadout_InvalidFilename>Invalid file name.</CustomResourceReadout_InvalidFilename>
+	<CustomResourceReadout_ImportMode>Import resource readout mode</CustomResourceReadout_ImportMode>
+	<CustomResourceReadout_OpenFolder>Open folder</CustomResourceReadout_OpenFolder>
+	<CustomResourceReadout_SelectFile>Select a file to import.</CustomResourceReadout_SelectFile>
 </LanguageData>

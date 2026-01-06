@@ -62,10 +62,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomResourceReadoutSettings.cs" />
+    <Compile Include="Dialog_ExportResourceReadoutMode.cs" />
     <Compile Include="Dialog_RenameResourceReadoutMode.cs" />
+    <Compile Include="Dialog_ImportResourceReadoutMode.cs" />
     <Compile Include="Dialog_SelectDefs.cs" />
     <Compile Include="Dialog_AddThingCategoryDefs.cs" />
     <Compile Include="Dialog_SelectIcon.cs" />
+    <Compile Include="Dialog_SelectStuff.cs" />
     <Compile Include="Dialog_SelectThingDefs.cs" />
     <Compile Include="Patch_ReorderableWidget.cs" />
     <Compile Include="ResourceReadoutItem.cs" />
@@ -78,6 +81,8 @@
     <Compile Include="ResourceReadoutCategory.cs" />
     <Compile Include="ResourceReadoutLeaf.cs" />
     <Compile Include="ResourceReadoutMode.cs" />
+    <Compile Include="ResourceReadoutModeDef.cs" />
+    <Compile Include="Utility.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
