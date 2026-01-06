@@ -17,14 +17,16 @@ namespace CustomResourceReadout
     public class CustomResourceReadoutSettings : ModSettings
     {
         private static ResourceReadoutMode editingMode;
-        public static IResourceReadoutItem deletedItem;
+        public static ResourceReadoutItem deletedItem;
+        private static Vector2 scrollPositionLeft, scrollPositionRight;
+        private static float heightLeft, heightRight;
+        public static int reorderableGroup;
+        public static ResourceReadoutItem draggedItem;
+        public static ResourceReadoutCategory dropIntoCategory;
 
         public static ResourceReadoutModeType modeType;
         public static ResourceReadoutMode currentMode;
         public static List<ResourceReadoutMode> customModes = new List<ResourceReadoutMode>();
-
-        private static Vector2 scrollPositionLeft, scrollPositionRight;
-        private static float heightLeft, heightRight;
 
         public static string CurrentModeLabel
         {
@@ -104,10 +106,56 @@ namespace CustomResourceReadout
             Rect outRect = right;
             outRect.yMax -= 40f;
             Rect viewRect = new Rect(0f, 0f, right.width - 20f, heightRight);
+
+            if (Event.current.type == EventType.Repaint)
+            {
+                reorderableGroup = ReorderableWidget.NewGroup((_, to) =>
+                {
+                    if (draggedItem != null && dropIntoCategory == null)
+                    {
+                        // TODO Don't allow duplicate leafs
+                        List<ResourceReadoutItem> draggableItems = editingMode.items.SelectMany(i => i.DraggableItems).ToList();
+                        if (to < draggableItems.Count && draggableItems[to].parent == draggedItem)
+                        {
+                            return;
+                        }
+
+                        if (draggedItem.parent != null)
+                        {
+                            draggedItem.parent.items.Remove(draggedItem);
+                        }
+                        else
+                        {
+                            editingMode.items.Remove(draggedItem);
+                        }
+
+                        if (to < draggableItems.Count)
+                        {
+                            ResourceReadoutItem insertBeforeItem = draggableItems[to];
+                            if (insertBeforeItem.parent != null)
+                            {
+                                insertBeforeItem.parent.items.Insert(insertBeforeItem.parent.items.IndexOf(insertBeforeItem), draggedItem);
+                            }
+                            else
+                            {
+                                editingMode.items.Insert(editingMode.items.IndexOf(insertBeforeItem), draggedItem);
+                            }
+                            draggedItem.parent = insertBeforeItem.parent;
+                        }
+                        else
+                        {
+                            editingMode.items.Add(draggedItem);
+                            draggedItem.parent = null;
+                        }
+                    }
+                }, ReorderableDirection.Vertical, outRect, dropIntoCategory != null ? 99999f : -1f);
+            }
+
+            dropIntoCategory = null;
             Widgets.BeginScrollView(outRect, ref scrollPositionRight, viewRect);
 
             Rect itemRect = new Rect(viewRect.x, viewRect.y, viewRect.width, 0f);
-            foreach (IResourceReadoutItem item in editingMode.items)
+            foreach (ResourceReadoutItem item in editingMode.items)
             {
                 itemRect.y += item.DoSettingsInterface(itemRect);
             }
@@ -131,6 +179,25 @@ namespace CustomResourceReadout
                         editingMode.items.Add(new ResourceReadoutCategory(p, c));
                     })))
                 }.ToList()));
+            }
+        }
+
+        public static void OnDragEnd()
+        {
+            // TODO Don't allow circular parentage
+            // TODO Don't allow duplicate leafs
+            if (dropIntoCategory != null && draggedItem != null && dropIntoCategory != draggedItem && editingMode != null)
+            {
+                if (draggedItem.parent != null)
+                {
+                    draggedItem.parent.items.Remove(draggedItem);
+                }
+                else
+                {
+                    editingMode.items.Remove(draggedItem);
+                }
+                dropIntoCategory.items.Add(draggedItem);
+                draggedItem.parent = dropIntoCategory;
             }
         }
 

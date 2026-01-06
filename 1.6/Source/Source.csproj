@@ -67,7 +67,8 @@
     <Compile Include="Dialog_AddThingCategoryDefs.cs" />
     <Compile Include="Dialog_SelectIcon.cs" />
     <Compile Include="Dialog_SelectThingDefs.cs" />
-    <Compile Include="IResourceReadoutItem.cs" />
+    <Compile Include="Patch_ReorderableWidget.cs" />
+    <Compile Include="ResourceReadoutItem.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Patch_PlaySettings.cs" />
     <Compile Include="Patch_ResourceCounter.cs" />

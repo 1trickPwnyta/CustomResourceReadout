@@ -38,7 +38,7 @@ namespace CustomResourceReadout
                     using (new TextBlock(TextAnchor.MiddleLeft))
                     {
                         Dictionary<ThingDef, int> amounts = Find.CurrentMap.resourceCounter.AllCountedAmounts;
-                        foreach (IResourceReadoutItem item in CustomResourceReadoutSettings.currentMode.items.Where(i => i is ResourceReadoutLeaf l && amounts.ContainsKey(l.Def)))
+                        foreach (ResourceReadoutItem item in CustomResourceReadoutSettings.currentMode.items.Where(i => i is ResourceReadoutLeaf l && amounts.ContainsKey(l.Def)))
                         {
                             if (item is ResourceReadoutLeaf l)
                             {

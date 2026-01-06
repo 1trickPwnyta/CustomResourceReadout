@@ -7,19 +7,19 @@ using Verse.Sound;
 
 namespace CustomResourceReadout
 {
-    public class ResourceReadoutCategory : IResourceReadoutItem, IExposable
+    public class ResourceReadoutCategory : ResourceReadoutItem, IExposable
     {
         private bool expanded;
         private bool uiExpanded;
         private string iconPath;
         private Color iconColor;
         private Texture2D icon;
-        public List<IResourceReadoutItem> items = new List<IResourceReadoutItem>();
-        public IResourceReadoutItem deletedItem;
+        public List<ResourceReadoutItem> items = new List<ResourceReadoutItem>();
+        public ResourceReadoutItem deletedItem;
 
-        public IEnumerable<ThingDef> ThingDefs => items.SelectMany(i => i.ThingDefs);
+        public override IEnumerable<ThingDef> ThingDefs => items.SelectMany(i => i.ThingDefs);
 
-        public Texture2D Icon
+        public override Texture2D Icon
         {
             get
             {
@@ -30,6 +30,18 @@ namespace CustomResourceReadout
                 return icon;
             }
         }
+
+        protected override IEnumerable<FloatMenuOption> FloatMenuOptions => new[]
+        {
+            new FloatMenuOption("CustomResourceReadout_AddResources".Translate(), () => Find.WindowStack.Add(new Dialog_SelectThingDefs(items))),
+            new FloatMenuOption("CustomResourceReadout_AddCategories".Translate(), () => Find.WindowStack.Add(new Dialog_AddThingCategoryDefs(items))),
+            new FloatMenuOption("CustomResourceReadout_AddEmptyCategory".Translate(), () => Find.WindowStack.Add(new Dialog_SelectIcon("CustomResourceReadout_AddEmptyCategory".Translate(), (p, c) =>
+            {
+                items.Add(new ResourceReadoutCategory(p, c));
+            })))
+        };
+
+        public override IEnumerable<ResourceReadoutItem> DraggableItems => uiExpanded ? base.DraggableItems.Concat(items.SelectMany(i => i.DraggableItems)) : base.DraggableItems;
 
         public ResourceReadoutCategory() { }
 
@@ -51,11 +63,17 @@ namespace CustomResourceReadout
             }
         }
 
-        public float DoSettingsInterface(Rect rect, ResourceReadoutCategory parentCategory = null)
+        protected override void OnDragOver(Rect rect)
         {
-            rect.height = 24f;
-            Widgets.DrawHighlightIfMouseover(rect);
+            if (CustomResourceReadoutSettings.draggedItem != this && Mouse.IsOver(rect.MiddlePart(1f, 0.5f)))
+            {
+                Widgets.DrawStrongHighlight(rect);
+                CustomResourceReadoutSettings.dropIntoCategory = this;
+            }
+        }
 
+        protected override float DoSettingsInterfaceSub(Rect rect)
+        {
             Rect expandRect = rect.LeftPartPixels(rect.height);
             if (Widgets.ButtonImage(expandRect.ContractedBy(2f), uiExpanded ? TexButton.Collapse : TexButton.Reveal))
             {
@@ -67,30 +85,6 @@ namespace CustomResourceReadout
             GUI.DrawTexture(iconRect.ContractedBy(1f), Icon, ScaleMode.ScaleToFit, true, 1f, iconColor, 0f, 0f);
             Rect labelRect = rect.RightPartPixels(rect.width - iconRect.width - expandRect.width);
             using (new TextBlock(TextAnchor.MiddleLeft)) Widgets.Label(labelRect, "CustomResourceReadout_ItemsInCategory".Translate(items.Count));
-            
-            if (Widgets.ButtonInvisible(rect))
-            {
-                Find.WindowStack.Add(new FloatMenu(new[]
-                {
-                    new FloatMenuOption("CustomResourceReadout_AddResources".Translate(), () => Find.WindowStack.Add(new Dialog_SelectThingDefs(items))),
-                    new FloatMenuOption("CustomResourceReadout_AddCategories".Translate(), () => Find.WindowStack.Add(new Dialog_AddThingCategoryDefs(items))),
-                    new FloatMenuOption("CustomResourceReadout_AddEmptyCategory".Translate(), () => Find.WindowStack.Add(new Dialog_SelectIcon("CustomResourceReadout_AddEmptyCategory".Translate(), (p, c) =>
-                    {
-                        items.Add(new ResourceReadoutCategory(p, c));
-                    }))),
-                    new FloatMenuOption("Delete".Translate(), () =>
-                    {
-                        if (parentCategory != null)
-                        {
-                            parentCategory.deletedItem = this;
-                        }
-                        else
-                        {
-                            CustomResourceReadoutSettings.deletedItem = this;
-                        }
-                    })
-                }.ToList()));
-            }
 
             float y = rect.y;
             if (uiExpanded)
@@ -98,9 +92,9 @@ namespace CustomResourceReadout
                 rect.xMin += 24f;
                 rect.y += rect.height;
                 rect.height = 0f;
-                foreach (IResourceReadoutItem item in items)
+                foreach (ResourceReadoutItem item in items)
                 {
-                    rect.y += item.DoSettingsInterface(rect, this);
+                    rect.y += item.DoSettingsInterface(rect);
                 }
                 if (deletedItem != null)
                 {
@@ -118,9 +112,16 @@ namespace CustomResourceReadout
             Scribe_Values.Look(ref iconPath, "iconPath");
             Scribe_Values.Look(ref iconColor, "iconColor");
             Scribe_Collections.Look(ref items, "items", LookMode.Deep);
-            if (Scribe.mode == LoadSaveMode.PostLoadInit && items == null)
+            if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {
-                items = new List<IResourceReadoutItem>();
+                if (items == null)
+                {
+                    items = new List<ResourceReadoutItem>();
+                }
+                foreach (ResourceReadoutItem item in items)
+                {
+                    item.parent = this;
+                }
             }
         }
     }

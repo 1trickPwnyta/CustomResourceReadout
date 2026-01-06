@@ -7,10 +7,10 @@ namespace CustomResourceReadout
 {
     public class Dialog_AddThingCategoryDefs : Dialog_SelectDefs<ThingCategoryDef>
     {
-        private List<IResourceReadoutItem> items;
+        private List<ResourceReadoutItem> items;
         private HashSet<ThingCategoryDef> selectedDefs = new HashSet<ThingCategoryDef>();
 
-        public Dialog_AddThingCategoryDefs(List<IResourceReadoutItem> items) : base(items)
+        public Dialog_AddThingCategoryDefs(List<ResourceReadoutItem> items) : base(items)
         {
             this.items = items;
         }
@@ -19,11 +19,11 @@ namespace CustomResourceReadout
 
         protected override Texture2D GetIcon(ThingCategoryDef def) => def.icon;
 
-        protected override bool HasDef(List<IResourceReadoutItem> items, ThingCategoryDef def) => selectedDefs.Contains(def);
+        protected override bool HasDef(List<ResourceReadoutItem> items, ThingCategoryDef def) => selectedDefs.Contains(def);
 
-        protected override void AddDef(List<IResourceReadoutItem> items, ThingCategoryDef def) => selectedDefs.Add(def);
+        protected override void AddDef(List<ResourceReadoutItem> items, ThingCategoryDef def) => selectedDefs.Add(def);
 
-        protected override void RemoveDef(List<IResourceReadoutItem> items, ThingCategoryDef def) => selectedDefs.Remove(def);
+        protected override void RemoveDef(List<ResourceReadoutItem> items, ThingCategoryDef def) => selectedDefs.Remove(def);
 
         public override void PreClose()
         {

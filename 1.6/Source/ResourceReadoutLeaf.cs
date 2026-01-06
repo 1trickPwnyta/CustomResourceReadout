@@ -4,7 +4,7 @@ using Verse;
 
 namespace CustomResourceReadout
 {
-    public class ResourceReadoutLeaf : IResourceReadoutItem, IExposable
+    public class ResourceReadoutLeaf : ResourceReadoutItem, IExposable
     {
         private ThingDef def;
         private ThingDef stuff;
@@ -39,13 +39,12 @@ namespace CustomResourceReadout
             }
         }
 
-        public IEnumerable<ThingDef> ThingDefs => new[] { def };
+        public override IEnumerable<ThingDef> ThingDefs => new[] { def };
 
-        public Texture2D Icon => icon;
+        public override Texture2D Icon => icon;
 
-        public float DoSettingsInterface(Rect rect, ResourceReadoutCategory parentCategory = null)
+        protected override float DoSettingsInterfaceSub(Rect rect)
         {
-            rect.height = 24f;
             Rect iconRect = rect.LeftPartPixels(rect.height);
             GUI.DrawTexture(iconRect.ContractedBy(1f), Icon);
             Rect labelRect = rect.RightPartPixels(rect.width - iconRect.width);

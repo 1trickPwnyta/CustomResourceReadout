@@ -6,7 +6,7 @@ namespace CustomResourceReadout
     public class ResourceReadoutMode : IExposable, ILoadReferenceable, IRenameable
     {
         public string name;
-        public List<IResourceReadoutItem> items = new List<IResourceReadoutItem>();
+        public List<ResourceReadoutItem> items = new List<ResourceReadoutItem>();
 
         public ResourceReadoutMode() { }
 
@@ -27,7 +27,7 @@ namespace CustomResourceReadout
             Scribe_Collections.Look(ref items, "items", LookMode.Deep);
             if (Scribe.mode == LoadSaveMode.PostLoadInit && items == null)
             {
-                items = new List<IResourceReadoutItem>();
+                items = new List<ResourceReadoutItem>();
             }
         }
 

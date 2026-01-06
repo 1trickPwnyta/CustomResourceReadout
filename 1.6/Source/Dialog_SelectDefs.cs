@@ -9,13 +9,13 @@ namespace CustomResourceReadout
 {
     public abstract class Dialog_SelectDefs<T> : Window where T: Def
     {
-        private List<IResourceReadoutItem> items;
+        private List<ResourceReadoutItem> items;
         private Vector2 scrollPosition;
         private float height;
 
         public override Vector2 InitialSize => new Vector2(400f, 600f);
 
-        public Dialog_SelectDefs(List<IResourceReadoutItem> items)
+        public Dialog_SelectDefs(List<ResourceReadoutItem> items)
         {
             this.items = items;
             doCloseX = true;
@@ -27,11 +27,11 @@ namespace CustomResourceReadout
 
         protected abstract Texture2D GetIcon(T def);
 
-        protected abstract bool HasDef(List<IResourceReadoutItem> items, T def);
+        protected abstract bool HasDef(List<ResourceReadoutItem> items, T def);
 
-        protected abstract void AddDef(List<IResourceReadoutItem> items, T def);
+        protected abstract void AddDef(List<ResourceReadoutItem> items, T def);
 
-        protected abstract void RemoveDef(List<IResourceReadoutItem> items, T def);
+        protected abstract void RemoveDef(List<ResourceReadoutItem> items, T def);
 
         public override void DoWindowContents(Rect inRect)
         {
