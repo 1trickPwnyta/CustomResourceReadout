@@ -9,7 +9,8 @@ namespace CustomResourceReadout
 {
     public abstract class Dialog_SelectDefs<T> : Window where T: Def
     {
-        private List<ResourceReadoutItem> items;
+        protected ResourceReadoutCategory parent;
+        protected List<ResourceReadoutItem> items;
         private Vector2 scrollPosition;
         private float height;
         private QuickSearchWidget search = new QuickSearchWidget();
@@ -17,9 +18,10 @@ namespace CustomResourceReadout
 
         public override Vector2 InitialSize => new Vector2(400f, 600f);
 
-        public Dialog_SelectDefs(List<ResourceReadoutItem> items)
+        public Dialog_SelectDefs(ResourceReadoutCategory parent)
         {
-            this.items = items;
+            this.parent = parent;
+            items = parent?.items ?? CustomResourceReadoutSettings.editingMode.items;
             doCloseX = true;
             doCloseButton = true;
             closeOnClickedOutside = true;

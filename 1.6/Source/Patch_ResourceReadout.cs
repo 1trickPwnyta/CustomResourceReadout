@@ -38,21 +38,10 @@ namespace CustomResourceReadout
                     using (new TextBlock(TextAnchor.MiddleLeft))
                     {
                         Dictionary<ThingDef, int> amounts = Find.CurrentMap.resourceCounter.AllCountedAmounts;
-                        foreach (ResourceReadoutItem item in CustomResourceReadoutSettings.currentMode.items.Where(i => i is ResourceReadoutLeaf l && amounts.ContainsKey(l.Def)))
+                        foreach (ResourceReadoutItem item in CustomResourceReadoutSettings.currentMode.items)
                         {
-                            if (item is ResourceReadoutLeaf l)
-                            {
-                                if (amounts[l.Def] > 0)
-                                {
-                                    Rect resourceRect = new Rect(0f, y, viewRect.width, 24f);
-                                    if (resourceRect.yMax >= ___scrollPosition.y && resourceRect.y <= ___scrollPosition.y + outRect.height)
-                                    {
-                                        __instance.DrawResourceSimple(resourceRect, l.Def);
-                                    }
-
-                                    y += 24f;
-                                }
-                            }
+                            Rect resourceRect = new Rect(0f, y, viewRect.width, 0f);
+                            y += item.OnGUI(resourceRect, __instance, amounts);
                         }
                     }
                     ___lastDrawnHeight = y;
@@ -81,7 +70,15 @@ namespace CustomResourceReadout
     {
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
-            foreach (CodeInstruction instruction in instructions)
+            List<CodeInstruction> instructionsList = instructions.ToList();
+            int index = instructionsList.FindIndex(i => i.LoadsConstant(34f));
+            instructionsList.InsertRange(index + 1, new[]
+            {
+                new CodeInstruction(OpCodes.Ldarga_S, 1),
+                new CodeInstruction(OpCodes.Call, typeof(Rect).PropertyGetter(nameof(Rect.x))),
+                new CodeInstruction(OpCodes.Add)
+            });
+            foreach (CodeInstruction instruction in instructionsList)
             {
                 if (instruction.Calls(typeof(ResourceCounter).Method(nameof(ResourceCounter.GetCount))))
                 {

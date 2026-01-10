@@ -1,4 +1,5 @@
 ﻿using RimWorld;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -9,6 +10,8 @@ namespace CustomResourceReadout
 {
     public class ResourceReadoutCategory : ResourceReadoutItem, IExposable
     {
+        private static Texture2D background = SolidColorMaterials.NewSolidColorTexture(new Color(0.1f, 0.1f, 0.1f, 0.6f));
+
         private bool expanded;
         private bool uiExpanded;
         private string iconPath;
@@ -16,8 +19,11 @@ namespace CustomResourceReadout
         private Texture2D icon;
         public List<ResourceReadoutItem> items = new List<ResourceReadoutItem>();
         public ResourceReadoutItem deletedItem;
+        public string tip;
 
         public override IEnumerable<ThingDef> ThingDefs => items.SelectMany(i => i.ThingDefs);
+
+        public override IEnumerable<Tuple<ThingDef, ThingDef>> ThingDefsStuff => items.SelectMany(i => i.ThingDefsStuff);
 
         public Texture2D Icon
         {
@@ -42,11 +48,11 @@ namespace CustomResourceReadout
         {
             get
             {
-                yield return new FloatMenuOption("CustomResourceReadout_AddResources".Translate(), () => Find.WindowStack.Add(new Dialog_SelectThingDefs(items)));
-                yield return new FloatMenuOption("CustomResourceReadout_AddCategories".Translate(), () => Find.WindowStack.Add(new Dialog_AddThingCategoryDefs(items)));
+                yield return new FloatMenuOption("CustomResourceReadout_AddResources".Translate(), () => Find.WindowStack.Add(new Dialog_SelectThingDefs(this)));
+                yield return new FloatMenuOption("CustomResourceReadout_AddCategories".Translate(), () => Find.WindowStack.Add(new Dialog_AddThingCategoryDefs(this)));
                 yield return new FloatMenuOption("CustomResourceReadout_AddEmptyCategory".Translate(), () => Find.WindowStack.Add(new Dialog_SelectIcon("CustomResourceReadout_AddEmptyCategory".Translate(), (p, c) =>
                 {
-                    items.Add(new ResourceReadoutCategory(p, c));
+                    items.Add(new ResourceReadoutCategory(p, c, this));
                 })));
                 yield return new FloatMenuOption("CustomResourceReadout_EditIcon".Translate(), () => Find.WindowStack.Add(new Dialog_SelectIcon("CustomResourceReadout_EditIcon".Translate(), (p, c) =>
                 {
@@ -59,23 +65,27 @@ namespace CustomResourceReadout
 
         public override IEnumerable<ResourceReadoutItem> DraggableItems => uiExpanded ? base.DraggableItems.Concat(items.SelectMany(i => i.DraggableItems)) : base.DraggableItems;
 
-        public ResourceReadoutCategory() { }
+        public override float GUIXOffset => 7f;
 
-        public ResourceReadoutCategory(string iconPath, Color iconColor) : this()
+        public ResourceReadoutCategory()
+        {
+        }
+
+        public ResourceReadoutCategory(string iconPath, Color iconColor, ResourceReadoutCategory parent) : base(parent)
         {
             this.iconPath = iconPath;
             this.iconColor = iconColor;
         }
 
-        public ResourceReadoutCategory(ThingCategoryDef category) : this(category.iconPath, Color.white)
+        public ResourceReadoutCategory(ThingCategoryDef category, ResourceReadoutCategory parent) : this(category.iconPath, Color.white, parent)
         {
             foreach (ThingCategoryDef childCategory in category.childCategories)
             {
-                items.Add(new ResourceReadoutCategory(childCategory));
+                items.Add(new ResourceReadoutCategory(childCategory, this));
             }
             foreach (ThingDef def in category.childThingDefs)
             {
-                items.Add(new ResourceReadoutLeaf(def));
+                items.Add(new ResourceReadoutLeaf(def, this));
             }
         }
 
@@ -136,11 +146,76 @@ namespace CustomResourceReadout
             return rect.yMax - y;
         }
 
-        public void ExposeData()
+        public override float OnGUI(Rect rect, ResourceReadout readout, Dictionary<ThingDef, int> amounts)
+        {
+            int totalCount = ThingDefs.Distinct().Sum(d => amounts[d]);
+            Dictionary<Tuple<ThingDef, ThingDef>, int> amountsStuff = Find.CurrentMap.resourceCounter.GetCountedAmountsStuff();
+            totalCount += ThingDefsStuff.Distinct().Sum(t => amountsStuff.ContainsKey(t) ? amountsStuff[t] : 0);
+            if (totalCount > 0)
+            {
+                rect.height = 24f;
+                Rect expandRect = rect.LeftPartPixels(18f);
+                if (Widgets.ButtonImage(expandRect.MiddlePartPixels(expandRect.width, 18f), expanded ? TexButton.Collapse : TexButton.Reveal))
+                {
+                    expanded = !expanded; // TODO Save this at some point
+                    (expanded ? SoundDefOf.TabOpen : SoundDefOf.TabClose).PlayOneShot(null);
+                }
+
+                Rect mainRect = rect;
+                mainRect.xMin += expandRect.width;
+                Rect position = mainRect;
+                position.width = 80f;
+                position.yMax -= 3f;
+                position.yMin += 3f;
+                GUI.DrawTexture(position, background);
+                if (Mouse.IsOver(mainRect))
+                {
+                    GUI.DrawTexture(mainRect, TexUI.HighlightTex);
+                    if (!tip.NullOrEmpty())
+                    {
+                        TooltipHandler.TipRegion(mainRect, new TipSignal(tip, GetHashCode()));
+                    }
+                }
+
+                Rect iconRect = mainRect;
+                iconRect.width = iconRect.height = 28f;
+                iconRect.y = mainRect.y + mainRect.height / 2f - iconRect.height / 2f;
+                if (Icon != null)
+                {
+                    GUI.color = iconColor;
+                    Widgets.DrawTextureFitted(iconRect, Icon, 1f);
+                    GUI.color = Color.white;
+                }
+
+                Rect labelRect = mainRect;
+                labelRect.xMin = iconRect.xMax + 6f;
+                Widgets.Label(labelRect, totalCount.ToStringCached());
+
+                float y = rect.y;
+                if (expanded)
+                {
+                    rect.y += rect.height;
+                    rect.height = 0f;
+                    foreach (ResourceReadoutItem item in items)
+                    {
+                        Rect itemRect = rect;
+                        itemRect.xMin += item.GUIXOffset;
+                        rect.y += item.OnGUI(itemRect, readout, amounts);
+                    }
+                }
+
+                return rect.yMax - y;
+            }
+
+            return 0f;
+        }
+
+        protected override void ExposeDataSub()
         {
             Scribe_Values.Look(ref expanded, "expanded");
             Scribe_Values.Look(ref iconPath, "iconPath");
             Scribe_Values.Look(ref iconColor, "iconColor");
+            Scribe_Values.Look(ref tip, "tip", tip);
             Scribe_Collections.Look(ref items, "items", LookMode.Deep);
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {

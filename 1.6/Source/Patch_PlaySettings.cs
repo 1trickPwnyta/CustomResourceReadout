@@ -45,6 +45,14 @@ namespace CustomResourceReadout
         private static void ChangeResourceReadout(ResourceReadoutModeType type, ResourceReadoutMode mode = null)
         {
             CustomResourceReadoutSettings.modeType = type;
+            if (type == ResourceReadoutModeType.Simple)
+            {
+                Prefs.ResourceReadoutCategorized = false;
+            }
+            else if (type == ResourceReadoutModeType.Categorized)
+            {
+                Prefs.ResourceReadoutCategorized = true;
+            }
             CustomResourceReadoutSettings.currentMode = mode;
             ResourceCounter.ResetDefs();
             foreach (Map map in Find.Maps)

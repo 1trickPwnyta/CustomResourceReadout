@@ -7,12 +7,10 @@ namespace CustomResourceReadout
 {
     public class Dialog_AddThingCategoryDefs : Dialog_SelectDefs<ThingCategoryDef>
     {
-        private List<ResourceReadoutItem> items;
         private HashSet<ThingCategoryDef> selectedDefs = new HashSet<ThingCategoryDef>();
 
-        public Dialog_AddThingCategoryDefs(List<ResourceReadoutItem> items) : base(items)
+        public Dialog_AddThingCategoryDefs(ResourceReadoutCategory parent) : base(parent)
         {
-            this.items = items;
         }
 
         protected override bool DefAllowed(ThingCategoryDef def) => def.icon != null && def.icon != BaseContent.BadTex;
@@ -30,7 +28,7 @@ namespace CustomResourceReadout
 
         public override void PreClose()
         {
-            items.AddRange(selectedDefs.Select(d => new ResourceReadoutCategory(d)));
+            items.AddRange(selectedDefs.Select(d => new ResourceReadoutCategory(d, parent) { tip = d.LabelCap}));
         }
     }
 }

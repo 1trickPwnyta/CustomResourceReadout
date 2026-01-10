@@ -2,10 +2,13 @@
 <LanguageData>
 	<CustomResourceReadout_ResourceReadoutButtonTip>Change the resource readout mode.\n\nCurrent mode: {0}</CustomResourceReadout_ResourceReadoutButtonTip>
 	<CustomResourceReadout_CustomResourceReadoutModes>Custom resource readout modes</CustomResourceReadout_CustomResourceReadoutModes>
-	<CustomResourceReadout_AddNewMode>Add resource readout mode</CustomResourceReadout_AddNewMode>
+	<CustomResourceReadout_NewCustomResourceReadoutMode>Empty resource readout mode</CustomResourceReadout_NewCustomResourceReadoutMode>
+	<CustomResourceReadout_SimpleCopy>Use simple mode as template</CustomResourceReadout_SimpleCopy>
+	<CustomResourceReadout_CategorizedCopy>Use categorized mode as template</CustomResourceReadout_CategorizedCopy>
+	<CustomResourceReadout_AddNewMode>Add resource readout mode...</CustomResourceReadout_AddNewMode>
 	<CustomResourceReadout_EnterAUniqueName>Enter a unique name.</CustomResourceReadout_EnterAUniqueName>
 	<CustomResourceReadout_NameAlreadyExists>This name is already in use.</CustomResourceReadout_NameAlreadyExists>
-	<CustomResourceReadout_AddNewItem>Add resource readout items</CustomResourceReadout_AddNewItem>
+	<CustomResourceReadout_AddNewItem>Add resource readout items...</CustomResourceReadout_AddNewItem>
 	<CustomResourceReadout_AddResources>Select resources</CustomResourceReadout_AddResources>
 	<CustomResourceReadout_AddCategories>Add categories</CustomResourceReadout_AddCategories>
 	<CustomResourceReadout_AddEmptyCategory>Add custom category</CustomResourceReadout_AddEmptyCategory>

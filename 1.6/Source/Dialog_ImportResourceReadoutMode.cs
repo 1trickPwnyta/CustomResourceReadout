@@ -58,6 +58,7 @@ namespace CustomResourceReadout
                 }
                 fileRect.y += fileRect.height;
             }
+            height = fileRect.y;
             Widgets.EndScrollView();
 
             Rect buttonRect = inRect.BottomPartPixels(CloseButSize.y);

@@ -1,15 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using RimWorld;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Verse;
 
 namespace CustomResourceReadout
 {
-    public abstract class ResourceReadoutItem
+    public abstract class ResourceReadoutItem : IExposable
     {
+        public bool alwaysShow; // TODO Actually use this
         public ResourceReadoutCategory parent;
 
         public abstract IEnumerable<ThingDef> ThingDefs { get; }
+
+        public abstract IEnumerable<Tuple<ThingDef, ThingDef>> ThingDefsStuff { get; }
 
         protected virtual float SettingsInterfaceInteractionRectHeight => 24f;
 
@@ -22,6 +27,8 @@ namespace CustomResourceReadout
         {
             get { yield break; }
         }
+
+        public abstract float GUIXOffset { get; }
 
         public ResourceReadoutItem(ResourceReadoutCategory parent = null)
         {
@@ -72,6 +79,16 @@ namespace CustomResourceReadout
             }
 
             return height;
+        }
+
+        public abstract float OnGUI(Rect rect, ResourceReadout readout, Dictionary<ThingDef, int> amounts);
+
+        protected abstract void ExposeDataSub();
+
+        public void ExposeData()
+        {
+            Scribe_Values.Look(ref alwaysShow, "alwaysShow");
+            ExposeDataSub();
         }
     }
 }

@@ -52,6 +52,16 @@ namespace CustomResourceReadout
             }
         }
 
+        private static void AddResourceReadoutMode(ResourceReadoutMode mode)
+        {
+            mode.name = "CustomResourceReadout_EnterAUniqueName".Translate();
+            Find.WindowStack.Add(new Dialog_RenameResourceReadoutMode(mode, () =>
+            {
+                customModes.Add(mode);
+                editingMode = mode;
+            }));
+        }
+
         private static void DoLeftSide(Rect left)
         {
             Widgets.Label(left, "CustomResourceReadout_CustomResourceReadoutModes".Translate());
@@ -125,6 +135,11 @@ namespace CustomResourceReadout
                 {
                     editingMode = null;
                 }
+                if (currentMode == deletedMode)
+                {
+                    currentMode = null;
+                    modeType = ResourceReadoutModeType.Simple;
+                }
             }
 
             Widgets.EndScrollView();
@@ -134,12 +149,21 @@ namespace CustomResourceReadout
             bottomRect.height = 40f;
             if (Widgets.ButtonText(bottomRect.ContractedBy(1f), "CustomResourceReadout_AddNewMode".Translate()))
             {
-                ResourceReadoutMode mode = new ResourceReadoutMode("CustomResourceReadout_EnterAUniqueName".Translate());
-                Find.WindowStack.Add(new Dialog_RenameResourceReadoutMode(mode, () =>
+                Find.WindowStack.Add(new FloatMenu(new[]
                 {
-                    customModes.Add(mode);
-                    editingMode = mode;
-                }));
+                    new FloatMenuOption("CustomResourceReadout_SimpleCopy".Translate(), () =>
+                    {
+                        AddResourceReadoutMode(ResourceReadoutMode.FromSimple());
+                    }),
+                    new FloatMenuOption("CustomResourceReadout_CategorizedCopy".Translate(), () =>
+                    {
+                        AddResourceReadoutMode(ResourceReadoutMode.FromCategorized());
+                    }),
+                    new FloatMenuOption("CustomResourceReadout_NewCustomResourceReadoutMode".Translate(), () =>
+                    {
+                        AddResourceReadoutMode(new ResourceReadoutMode());
+                    })
+                }.ToList()));
             }
             bottomRect.y += bottomRect.height;
             if (Widgets.ButtonText(bottomRect.ContractedBy(1f), "CustomResourceReadout_ImportMode".Translate()))
@@ -231,11 +255,11 @@ namespace CustomResourceReadout
             {
                 Find.WindowStack.Add(new FloatMenu(new[]
                 {
-                    new FloatMenuOption("CustomResourceReadout_AddResources".Translate(), () => Find.WindowStack.Add(new Dialog_SelectThingDefs(editingMode.items))),
-                    new FloatMenuOption("CustomResourceReadout_AddCategories".Translate(), () => Find.WindowStack.Add(new Dialog_AddThingCategoryDefs(editingMode.items))),
+                    new FloatMenuOption("CustomResourceReadout_AddResources".Translate(), () => Find.WindowStack.Add(new Dialog_SelectThingDefs(null))),
+                    new FloatMenuOption("CustomResourceReadout_AddCategories".Translate(), () => Find.WindowStack.Add(new Dialog_AddThingCategoryDefs(null))),
                     new FloatMenuOption("CustomResourceReadout_AddEmptyCategory".Translate(), () => Find.WindowStack.Add(new Dialog_SelectIcon("CustomResourceReadout_AddEmptyCategory".Translate(), (p, c) =>
                     {
-                        editingMode.items.Add(new ResourceReadoutCategory(p, c));
+                        editingMode.items.Add(new ResourceReadoutCategory(p, c, null));
                     })))
                 }.ToList()));
             }

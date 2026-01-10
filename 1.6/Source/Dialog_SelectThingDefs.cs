@@ -7,7 +7,7 @@ namespace CustomResourceReadout
 {
     public class Dialog_SelectThingDefs : Dialog_SelectDefs<ThingDef>
     {
-        public Dialog_SelectThingDefs(List<ResourceReadoutItem> items) : base(items)
+        public Dialog_SelectThingDefs(ResourceReadoutCategory parent) : base(parent)
         {
         }
 
@@ -24,7 +24,7 @@ namespace CustomResourceReadout
 
         protected override bool HasDef(List<ResourceReadoutItem> items, ThingDef def) => items.Any(i => i is ResourceReadoutLeaf l && l.Def == def);
 
-        protected override void AddDef(List<ResourceReadoutItem> items, ThingDef def) => items.Add(new ResourceReadoutLeaf(def));
+        protected override void AddDef(List<ResourceReadoutItem> items, ThingDef def) => items.Add(new ResourceReadoutLeaf(def, parent));
 
         protected override void RemoveDef(List<ResourceReadoutItem> items, ThingDef def) => items.RemoveWhere(i => i is ResourceReadoutLeaf l && l.Def == def);
     }
