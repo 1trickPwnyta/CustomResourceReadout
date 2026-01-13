@@ -9,7 +9,7 @@ namespace CustomResourceReadout
 {
     public abstract class ResourceReadoutItem : IExposable
     {
-        public bool alwaysShow; // TODO Actually use this
+        public bool alwaysShow;
         public ResourceReadoutCategory parent;
 
         public abstract IEnumerable<ThingDef> ThingDefs { get; }
@@ -64,6 +64,10 @@ namespace CustomResourceReadout
             {
                 Find.WindowStack.Add(new FloatMenu(FloatMenuOptions.Concat(new[]
                 {
+                    new FloatMenuOption("CustomResourceReadout_AlwaysShow".Translate(), () =>
+                    {
+                        alwaysShow = !alwaysShow;
+                    }, alwaysShow ? Widgets.CheckboxOnTex : Widgets.CheckboxOffTex, Color.white, iconJustification: HorizontalJustification.Right, mouseoverGuiAction: r => TooltipHandler.TipRegionByKey(r, "CustomResourceReadout_AlwaysShowDesc")),
                     new FloatMenuOption("Delete".Translate(), () =>
                     {
                         if (parent != null)

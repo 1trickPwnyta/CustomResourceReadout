@@ -24,4 +24,7 @@
 	<CustomResourceReadout_ImportMode>Import resource readout mode</CustomResourceReadout_ImportMode>
 	<CustomResourceReadout_OpenFolder>Open folder</CustomResourceReadout_OpenFolder>
 	<CustomResourceReadout_SelectFile>Select a file to import.</CustomResourceReadout_SelectFile>
+	<CustomResourceReadout_AlwaysShow>Always show</CustomResourceReadout_AlwaysShow>
+	<CustomResourceReadout_AlwaysShowDesc>Enabling this will force the resource readout to always show this item even when the count is zero.</CustomResourceReadout_AlwaysShowDesc>
+	<CustomResourceReadout_EditCustomResourceReadoutModes>Settings</CustomResourceReadout_EditCustomResourceReadoutModes>
 </LanguageData>

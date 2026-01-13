@@ -38,8 +38,13 @@ namespace CustomResourceReadout
                 }.Concat(CustomResourceReadoutSettings.customModes.Select(m => new FloatMenuOption(m.name, () =>
                 {
                     ChangeResourceReadout(ResourceReadoutModeType.Custom, m);
-                }))).ToList()));
-            } // TODO Need to ensure this gets written to the config file at some point
+                })))
+                .Append(new FloatMenuOption("CustomResourceReadout_EditCustomResourceReadoutModes".Translate(), () =>
+                {
+                    Find.WindowStack.Add(new Dialog_ModSettings(CustomResourceReadoutMod.Mod));
+                }))
+                .ToList()));
+            }
         }
 
         private static void ChangeResourceReadout(ResourceReadoutModeType type, ResourceReadoutMode mode = null)
@@ -59,6 +64,8 @@ namespace CustomResourceReadout
             {
                 map.resourceCounter.UpdateResourceCounts();
             }
+            Utility.ClearCountAsResourceCache();
+            CustomResourceReadoutSettings.dirty = true;
         }
     }
 }

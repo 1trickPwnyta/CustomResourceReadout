@@ -10,6 +10,7 @@ namespace CustomResourceReadout
     {
         private ThingDef def;
         public ThingDef stuff;
+        public bool countAll; // TODO Actually use this
 
         public ResourceReadoutLeaf()
         {
@@ -70,13 +71,14 @@ namespace CustomResourceReadout
         {
             Scribe_Defs.Look(ref def, "def");
             Scribe_Defs.Look(ref stuff, "stuff");
+            Scribe_Values.Look(ref countAll, "countAll");
         }
 
         public override float OnGUI(Rect rect, ResourceReadout readout, Dictionary<ThingDef, int> amounts)
         {
             if (stuff == null)
             {
-                if (amounts[def] > 0)
+                if (amounts[def] > 0 || alwaysShow)
                 {
                     rect.height = 24f;
                     DrawResource(rect, amounts[def]);
@@ -87,7 +89,7 @@ namespace CustomResourceReadout
                 Dictionary<Tuple<ThingDef, ThingDef>, int> countedAmountsStuff = Find.CurrentMap.resourceCounter.GetCountedAmountsStuff();
                 Tuple<ThingDef, ThingDef> key = new Tuple<ThingDef, ThingDef>(def, stuff);
                 int count = countedAmountsStuff.ContainsKey(key) ? countedAmountsStuff[key] : 0;
-                if (count > 0)
+                if (count > 0 || alwaysShow)
                 {
                     rect.height = 24f;
                     DrawResource(rect, count);
@@ -99,7 +101,6 @@ namespace CustomResourceReadout
 
         private void DrawResource(Rect rect, int count)
         {
-            // TODO Get simple readout to match custom simple readout
             if (Mouse.IsOver(rect))
             {
                 GUI.DrawTexture(rect, TexUI.HighlightTex);

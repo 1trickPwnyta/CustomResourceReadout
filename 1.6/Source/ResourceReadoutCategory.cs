@@ -67,6 +67,8 @@ namespace CustomResourceReadout
 
         public override float GUIXOffset => 7f;
 
+        private bool AlwaysShowThisOrDescendant => alwaysShow || items.Any(i => i.alwaysShow || i is ResourceReadoutCategory c && c.AlwaysShowThisOrDescendant);
+
         public ResourceReadoutCategory()
         {
         }
@@ -151,13 +153,13 @@ namespace CustomResourceReadout
             int totalCount = ThingDefs.Distinct().Sum(d => amounts[d]);
             Dictionary<Tuple<ThingDef, ThingDef>, int> amountsStuff = Find.CurrentMap.resourceCounter.GetCountedAmountsStuff();
             totalCount += ThingDefsStuff.Distinct().Sum(t => amountsStuff.ContainsKey(t) ? amountsStuff[t] : 0);
-            if (totalCount > 0)
+            if (totalCount > 0 || AlwaysShowThisOrDescendant)
             {
                 rect.height = 24f;
                 Rect expandRect = rect.LeftPartPixels(18f);
                 if (Widgets.ButtonImage(expandRect.MiddlePartPixels(expandRect.width, 18f), expanded ? TexButton.Collapse : TexButton.Reveal))
                 {
-                    expanded = !expanded; // TODO Save this at some point
+                    expanded = !expanded;
                     (expanded ? SoundDefOf.TabOpen : SoundDefOf.TabClose).PlayOneShot(null);
                 }
 

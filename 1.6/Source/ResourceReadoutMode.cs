@@ -14,7 +14,7 @@ namespace CustomResourceReadout
             ResourceReadoutMode mode = new ResourceReadoutMode();
             foreach (ThingDef def in DefDatabase<ThingDef>.AllDefsListForReading.Where(d => d.CountAsResource).OrderByDescending(d => d.resourceReadoutPriority))
             {
-                mode.items.Add(new ResourceReadoutLeaf(def, null));
+                mode.items.Add(new ResourceReadoutLeaf(def, null) { alwaysShow = def.resourceReadoutAlwaysShow });
             }
             return mode;
         }

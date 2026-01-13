@@ -16,13 +16,14 @@ namespace CustomResourceReadout
 
     public class CustomResourceReadoutSettings : ModSettings
     {
+        public static bool dirty;
+
         public static ResourceReadoutMode editingMode;
         public static ResourceReadoutItem deletedItem;
         private static Vector2 scrollPositionLeft, scrollPositionRight;
         private static float heightLeft, heightRight;
         private static int reorderableModeGroup;
         public static int reorderableItemGroup;
-        private static ResourceReadoutMode draggedMode;
         public static ResourceReadoutItem draggedItem;
         public static ResourceReadoutCategory dropIntoCategory;
 
@@ -50,6 +51,7 @@ namespace CustomResourceReadout
             {
                 DoRightSide(inRect.RightPart(0.65f));
             }
+            Utility.ClearCountAsResourceCache();
         }
 
         private static void AddResourceReadoutMode(ResourceReadoutMode mode)
@@ -100,7 +102,6 @@ namespace CustomResourceReadout
                 }
                 if ((Event.current.type != EventType.MouseDown || Mouse.IsOver(innerRect)) && ReorderableWidget.Reorderable(reorderableModeGroup, modeRect))
                 {
-                    draggedMode = mode;
                     Widgets.DrawRectFast(innerRect, Color.black.WithAlpha(0.5f));
                 }
 

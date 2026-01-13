@@ -1,5 +1,6 @@
 ﻿using RimWorld;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Verse;
@@ -9,6 +10,7 @@ namespace CustomResourceReadout
     public static class Utility
     {
         private static readonly Dictionary<ResourceCounter, Dictionary<Tuple<ThingDef, ThingDef>, int>> countedAmountsStuff = new Dictionary<ResourceCounter, Dictionary<Tuple<ThingDef, ThingDef>, int>>();
+        private static readonly Hashtable countAsResourceCache = new Hashtable();
 
         public static Dictionary<Tuple<ThingDef, ThingDef>, int> GetCountedAmountsStuff(this ResourceCounter counter)
         {
@@ -27,5 +29,27 @@ namespace CustomResourceReadout
             }
             return true;
         }
+
+        public static bool CountAsResource(ThingDef def)
+        {
+            if (CustomResourceReadoutSettings.modeType == ResourceReadoutModeType.Custom)
+            {
+                if (def.CountAsResource)
+                {
+                    return true;
+                }
+                if (!countAsResourceCache.ContainsKey(def))
+                {
+                    countAsResourceCache[def] = CustomResourceReadoutSettings.currentMode.items.Any(i => i.ThingDefs.Contains(def));
+                }
+                return (bool)countAsResourceCache[def];
+            }
+            else
+            {
+                return def.CountAsResource;
+            }
+        }
+
+        public static void ClearCountAsResourceCache() => countAsResourceCache.Clear();
     }
 }

@@ -89,21 +89,9 @@ namespace CustomResourceReadout
                 if (instruction.Calls(typeof(ThingDef).PropertyGetter("CountAsResource")))
                 {
                     instruction.opcode = OpCodes.Call;
-                    instruction.operand = typeof(Patch_ResourceCounter_CountAsResource).Method(nameof(CountAsResource));
+                    instruction.operand = typeof(Utility).Method(nameof(Utility.CountAsResource));
                 }
                 yield return instruction;
-            }
-        }
-
-        private static bool CountAsResource(ThingDef def)
-        {
-            if (CustomResourceReadoutSettings.modeType == ResourceReadoutModeType.Custom)
-            {
-                return def.CountAsResource || CustomResourceReadoutSettings.currentMode.items.Any(i => i.ThingDefs.Contains(def)); // TODO cache this using a hashtable
-            }
-            else
-            {
-                return def.CountAsResource;
             }
         }
     }
