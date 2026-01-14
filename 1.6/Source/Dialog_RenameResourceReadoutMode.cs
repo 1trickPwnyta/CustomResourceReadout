@@ -3,16 +3,20 @@ using Verse;
 
 namespace CustomResourceReadout
 {
-    public class Dialog_RenameResourceReadoutMode : Dialog_Rename<ResourceReadoutMode>
+    public class Dialog_RenameResourceReadoutMode : Dialog_CustomRename<ResourceReadoutMode>
     {
         private Action callback;
+        private string title;
 
-        public Dialog_RenameResourceReadoutMode(ResourceReadoutMode renaming, Action callback = null) : base(renaming)
+        public Dialog_RenameResourceReadoutMode(ResourceReadoutMode renaming, Action callback = null, string title = null) : base(renaming)
         {
             this.callback = callback;
+            this.title = title;
         }
 
         protected override int MaxNameLength => 64;
+
+        public override TaggedString Title => title ?? base.Title;
 
         protected override AcceptanceReport NameIsValid(string name)
         {

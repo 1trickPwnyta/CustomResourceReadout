@@ -54,14 +54,14 @@ namespace CustomResourceReadout
             Utility.ClearCountAsResourceCache();
         }
 
-        private static void AddResourceReadoutMode(ResourceReadoutMode mode)
+        private static void AddResourceReadoutMode(ResourceReadoutMode mode, string renameLabel = null)
         {
             mode.name = "CustomResourceReadout_EnterAUniqueName".Translate();
             Find.WindowStack.Add(new Dialog_RenameResourceReadoutMode(mode, () =>
             {
                 customModes.Add(mode);
                 editingMode = mode;
-            }));
+            }, renameLabel));
         }
 
         private static void DoLeftSide(Rect left)
@@ -94,7 +94,6 @@ namespace CustomResourceReadout
                 {
                     Widgets.DrawHighlightSelected(innerRect);
                 }
-                using (new TextBlock(TextAnchor.MiddleLeft)) Widgets.Label(innerRect.ContractedBy(2f), mode.name);
 
                 if (!ReorderableWidget.Dragging)
                 {
@@ -106,21 +105,30 @@ namespace CustomResourceReadout
                 }
 
                 Rect buttonRect = innerRect.RightPartPixels(innerRect.height);
-                if (Widgets.ButtonImage(buttonRect.ContractedBy(1f), TexButton.Delete))
+                if (Widgets.ButtonImage(buttonRect.ContractedBy(1f), TexButton.Delete, tooltip: "Delete".Translate()))
                 {
                     SoundDefOf.Click.PlayOneShot(null);
                     deletedMode = mode;
                 }
                 buttonRect.x -= buttonRect.width;
-                if (Widgets.ButtonImage(buttonRect.ContractedBy(1f), TexButton.Save))
+                if (Widgets.ButtonImage(buttonRect.ContractedBy(1f), TexButton.Save, tooltip: "Export".Translate()))
                 {
                     Find.WindowStack.Add(new Dialog_ExportResourceReadoutMode(mode));
                 }
                 buttonRect.x -= buttonRect.width;
-                if (Widgets.ButtonImage(buttonRect.ContractedBy(1f), TexButton.Rename))
+                if (Widgets.ButtonImage(buttonRect.ContractedBy(1f), TexButton.Copy, tooltip: "Copy".Translate()))
+                {
+                    AddResourceReadoutMode(mode.Copy(), "Copy".Translate());
+                }
+                buttonRect.x -= buttonRect.width;
+                if (Widgets.ButtonImage(buttonRect.ContractedBy(1f), TexButton.Rename, tooltip: "Rename".Translate()))
                 {
                     Find.WindowStack.Add(new Dialog_RenameResourceReadoutMode(mode));
                 }
+
+                Rect labelRect = innerRect;
+                labelRect.xMax = buttonRect.xMin;
+                using (new TextBlock(TextAnchor.MiddleLeft)) Widgets.Label(labelRect.ContractedBy(2f), mode.name);
 
                 if (Widgets.ButtonInvisible(innerRect))
                 {
@@ -154,15 +162,15 @@ namespace CustomResourceReadout
                 {
                     new FloatMenuOption("CustomResourceReadout_SimpleCopy".Translate(), () =>
                     {
-                        AddResourceReadoutMode(ResourceReadoutMode.FromSimple());
+                        AddResourceReadoutMode(ResourceReadoutMode.FromSimple(), "CustomResourceReadout_NameNewMode".Translate());
                     }),
                     new FloatMenuOption("CustomResourceReadout_CategorizedCopy".Translate(), () =>
                     {
-                        AddResourceReadoutMode(ResourceReadoutMode.FromCategorized());
+                        AddResourceReadoutMode(ResourceReadoutMode.FromCategorized(), "CustomResourceReadout_NameNewMode".Translate());
                     }),
                     new FloatMenuOption("CustomResourceReadout_NewCustomResourceReadoutMode".Translate(), () =>
                     {
-                        AddResourceReadoutMode(new ResourceReadoutMode());
+                        AddResourceReadoutMode(new ResourceReadoutMode(), "CustomResourceReadout_NameNewMode".Translate());
                     })
                 }.ToList()));
             }

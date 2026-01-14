@@ -86,5 +86,15 @@ namespace CustomResourceReadout
             label = name,
             items = items
         };
+
+        public ResourceReadoutMode Copy()
+        {
+            ResourceReadoutMode copy = new ResourceReadoutMode();
+            foreach (ResourceReadoutItem item in items)
+            {
+                copy.items.Add(item.Copy());
+            }
+            return copy;
+        }
     }
 }

@@ -35,7 +35,8 @@ namespace CustomResourceReadout
             closeOnClickedOutside = true;
 
             iconPathList = DefDatabase<ThingCategoryDef>.AllDefsListForReading.Select(d => d.iconPath)
-                .Concat(DefDatabase<ThingDef>.AllDefsListForReading.Select(d => d.uiIconPath ?? (d.graphicData?.graphicClass == typeof(Graphic_Single) ? d.graphicData.texPath : null)))
+                .Concat(DefDatabase<ThingDef>.AllDefsListForReading.Select(d => d.uiIconPath ?? (d.graphicData?.graphicClass == typeof(Graphic_Single) ? d.graphicData.texPath : d.graphicData?.graphicClass == typeof(Graphic_StackCount) ? d.graphicData.texPath + "/" + ContentFinder<Texture2D>.GetAllInFolder(d.graphicData.texPath).Where(t => !t.name.EndsWith(Graphic_Single.MaskSuffix)).OrderBy(t => t.name).Last().name : null)))
+                .Concat(DefDatabase<ExpansionDef>.AllDefsListForReading.Select(d => d.iconPath))
                 .Concat(DefDatabase<FactionDef>.AllDefsListForReading.Select(d => d.factionIconPath))
                 .Concat(DefDatabase<IdeoIconDef>.AllDefsListForReading.Select(d => d.iconPath))
                 .Concat(DefDatabase<StyleCategoryDef>.AllDefsListForReading.Select(d => d.iconPath))
@@ -43,8 +44,13 @@ namespace CustomResourceReadout
             icons = new Dictionary<string, Texture2D>();
             foreach (string iconPath in iconPathList)
             {
-                icons[iconPath] = ContentFinder<Texture2D>.Get(iconPath);
+                Texture2D icon = ContentFinder<Texture2D>.Get(iconPath, false);
+                if (icon != null)
+                {
+                    icons[iconPath] = icon;
+                }
             }
+            iconPathList.RemoveWhere(p => !icons.ContainsKey(p));
         }
 
         public override void DoWindowContents(Rect inRect)

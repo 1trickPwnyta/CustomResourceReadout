@@ -231,5 +231,18 @@ namespace CustomResourceReadout
                 }
             }
         }
+
+        protected override ResourceReadoutItem CopySub()
+        {
+            ResourceReadoutCategory copy = new ResourceReadoutCategory(iconPath, iconColor, null);
+            copy.tip = tip;
+            foreach (ResourceReadoutItem item in items)
+            {
+                ResourceReadoutItem itemCopy = item.Copy();
+                itemCopy.parent = copy;
+                copy.items.Add(itemCopy);
+            }
+            return copy;
+        }
     }
 }

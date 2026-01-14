@@ -87,6 +87,15 @@ namespace CustomResourceReadout
 
         public abstract float OnGUI(Rect rect, ResourceReadout readout, Dictionary<ThingDef, int> amounts);
 
+        protected abstract ResourceReadoutItem CopySub();
+
+        public ResourceReadoutItem Copy()
+        {
+            ResourceReadoutItem copy = CopySub();
+            copy.alwaysShow = alwaysShow;
+            return copy;
+        }
+
         protected abstract void ExposeDataSub();
 
         public void ExposeData()

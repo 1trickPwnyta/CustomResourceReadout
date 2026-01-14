@@ -27,4 +27,5 @@
 	<CustomResourceReadout_AlwaysShow>Always show</CustomResourceReadout_AlwaysShow>
 	<CustomResourceReadout_AlwaysShowDesc>Enabling this will force the resource readout to always show this item even when the count is zero.</CustomResourceReadout_AlwaysShowDesc>
 	<CustomResourceReadout_EditCustomResourceReadoutModes>Settings</CustomResourceReadout_EditCustomResourceReadoutModes>
+	<CustomResourceReadout_NameNewMode>New mode</CustomResourceReadout_NameNewMode>
 </LanguageData>

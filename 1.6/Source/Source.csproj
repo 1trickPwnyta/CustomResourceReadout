@@ -62,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomResourceReadoutSettings.cs" />
+    <Compile Include="Dialog_CustomRename.cs" />
     <Compile Include="Dialog_ExportResourceReadoutMode.cs" />
     <Compile Include="Dialog_RenameResourceReadoutMode.cs" />
     <Compile Include="Dialog_ImportResourceReadoutMode.cs" />

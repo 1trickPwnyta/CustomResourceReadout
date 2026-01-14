@@ -115,5 +115,12 @@ namespace CustomResourceReadout
             labelRect.xMin = iconRect.xMax + 6f;
             Widgets.Label(labelRect, count.ToStringCached());
         }
+
+        protected override ResourceReadoutItem CopySub()
+        {
+            ResourceReadoutLeaf copy = new ResourceReadoutLeaf(def, null, stuff);
+            copy.countAll = countAll;
+            return copy;
+        }
     }
 }
