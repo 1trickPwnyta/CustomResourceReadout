@@ -3,11 +3,11 @@ using Verse;
 
 namespace CustomResourceReadout
 {
-    public class Dialog_ExportResourceReadoutMode : Dialog_Rename<ResourceReadoutMode>
+    public class Dialog_ExportResourceReadoutMode : Dialog_Rename<CustomResourceReadoutMode>
     {
-        private ResourceReadoutMode exporting;
+        private CustomResourceReadoutMode exporting;
 
-        public Dialog_ExportResourceReadoutMode(ResourceReadoutMode exporting) : base(new ResourceReadoutMode(exporting.name))
+        public Dialog_ExportResourceReadoutMode(CustomResourceReadoutMode exporting) : base(new CustomResourceReadoutMode(exporting.name))
         {
             this.exporting = exporting;
         }

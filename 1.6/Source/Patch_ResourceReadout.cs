@@ -14,7 +14,7 @@ namespace CustomResourceReadout
     {
         public static bool Prefix(ResourceReadout __instance, ref float ___lastDrawnHeight, ref Vector2 ___scrollPosition)
         {
-            if (CustomResourceReadoutSettings.modeType == ResourceReadoutModeType.Custom)
+            if (CustomResourceReadoutSettings.CustomOrPresetMode)
             {
                 if (Event.current.type != EventType.Layout && Current.ProgramState == ProgramState.Playing && Find.MainTabsRoot.OpenTab != MainButtonDefOf.Menu)
                 {
@@ -38,10 +38,10 @@ namespace CustomResourceReadout
                     using (new TextBlock(TextAnchor.MiddleLeft))
                     {
                         Dictionary<ThingDef, int> amounts = Find.CurrentMap.resourceCounter.AllCountedAmounts;
-                        foreach (ResourceReadoutItem item in CustomResourceReadoutSettings.currentMode.items)
+                        foreach (ResourceReadoutItem item in CustomResourceReadoutSettings.CurrentMode.Items)
                         {
                             Rect resourceRect = new Rect(0f, y, viewRect.width, 0f);
-                            y += item.OnGUI(resourceRect, __instance, amounts);
+                            y += item.OnGUI(resourceRect, amounts);
                         }
                     }
                     ___lastDrawnHeight = y;
@@ -91,7 +91,7 @@ namespace CustomResourceReadout
 
         private static int GetCount(ResourceCounter counter, ThingDef def)
         {
-            if (CustomResourceReadoutSettings.modeType == ResourceReadoutModeType.Custom)
+            if (CustomResourceReadoutSettings.CustomOrPresetMode)
             {
                 return counter.AllCountedAmounts[def];
             }

@@ -23,49 +23,38 @@ namespace CustomResourceReadout
 
         private static void DoResourceReadoutButton(WidgetRow row, ref bool _, Texture2D tex, string __, SoundDef mouseoverSound, string ___)
         {
-            if (row.ButtonIcon(tex, tooltip: "CustomResourceReadout_ResourceReadoutButtonTip".Translate(CustomResourceReadoutSettings.CurrentModeLabel)))
+            if (row.ButtonIcon(tex, tooltip: "CustomResourceReadout_ResourceReadoutButtonTip".Translate() + CustomResourceReadoutSettings.CurrentModeLabel))
             {
                 Find.WindowStack.Add(new FloatMenu(new[]
                 {
                     new FloatMenuOption("CustomResourceReadout_BasicUncategorized".Translate(), () =>
                     {
-                        ChangeResourceReadout(ResourceReadoutModeType.Simple);
+                        CustomResourceReadoutSettings.ChangeResourceReadout(ResourceReadoutModeType.Simple);
                     }),
                     new FloatMenuOption("CustomResourceReadout_BasicCategorized".Translate(), () =>
                     {
-                        ChangeResourceReadout(ResourceReadoutModeType.Categorized);
+                        CustomResourceReadoutSettings.ChangeResourceReadout(ResourceReadoutModeType.Categorized);
                     })
-                }.Concat(CustomResourceReadoutSettings.customModes.Select(m => new FloatMenuOption(m.name, () =>
+                }.Concat(CustomResourceReadoutSettings.CustomResourceReadoutModes.Select(m => new FloatMenuOption(m.name, () =>
                 {
-                    ChangeResourceReadout(ResourceReadoutModeType.Custom, m);
+                    CustomResourceReadoutSettings.ChangeResourceReadout(ResourceReadoutModeType.Custom, mode: m);
                 })))
+                .ConcatIfNotNull(DefDatabase<ResourceReadoutModeDef>.AllDefsListForReading.Count > 0 ? new[]
+                {
+                    new FloatMenuOption("CustomResourceReadout_Presets".Translate(), () =>
+                    {
+                        Find.WindowStack.Add(new FloatMenu(DefDatabase<ResourceReadoutModeDef>.AllDefsListForReading.Select(d => new FloatMenuOption(d.label, () =>
+                        {
+                            CustomResourceReadoutSettings.ChangeResourceReadout(ResourceReadoutModeType.Preset, preset: d);
+                        })).ToList()));
+                    })
+                } : null)
                 .Append(new FloatMenuOption("CustomResourceReadout_EditCustomResourceReadoutModes".Translate(), () =>
                 {
                     Find.WindowStack.Add(new Dialog_ModSettings(CustomResourceReadoutMod.Mod));
                 }))
                 .ToList()));
             }
-        }
-
-        private static void ChangeResourceReadout(ResourceReadoutModeType type, ResourceReadoutMode mode = null)
-        {
-            CustomResourceReadoutSettings.modeType = type;
-            if (type == ResourceReadoutModeType.Simple)
-            {
-                Prefs.ResourceReadoutCategorized = false;
-            }
-            else if (type == ResourceReadoutModeType.Categorized)
-            {
-                Prefs.ResourceReadoutCategorized = true;
-            }
-            CustomResourceReadoutSettings.currentMode = mode;
-            ResourceCounter.ResetDefs();
-            foreach (Map map in Find.Maps)
-            {
-                map.resourceCounter.UpdateResourceCounts();
-            }
-            Utility.ClearCountAsResourceCache();
-            CustomResourceReadoutSettings.dirty = true;
         }
     }
 }

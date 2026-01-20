@@ -32,7 +32,7 @@ namespace CustomResourceReadout
 
         public static bool CountAsResource(ThingDef def)
         {
-            if (CustomResourceReadoutSettings.modeType == ResourceReadoutModeType.Custom)
+            if (CustomResourceReadoutSettings.CustomOrPresetMode)
             {
                 if (def.CountAsResource)
                 {
@@ -40,7 +40,7 @@ namespace CustomResourceReadout
                 }
                 if (!countAsResourceCache.ContainsKey(def))
                 {
-                    countAsResourceCache[def] = CustomResourceReadoutSettings.currentMode.items.Any(i => i.ThingDefs.Contains(def));
+                    countAsResourceCache[def] = CustomResourceReadoutSettings.CurrentMode.Items.Any(i => i.ThingDefs.Contains(def));
                 }
                 return (bool)countAsResourceCache[def];
             }
@@ -50,6 +50,9 @@ namespace CustomResourceReadout
             }
         }
 
-        public static void ClearCountAsResourceCache() => countAsResourceCache.Clear();
+        public static void ClearCaches()
+        {
+            countAsResourceCache.Clear();
+        }
     }
 }

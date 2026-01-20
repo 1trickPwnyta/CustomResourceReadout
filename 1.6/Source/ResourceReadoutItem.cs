@@ -9,12 +9,19 @@ namespace CustomResourceReadout
 {
     public abstract class ResourceReadoutItem : IExposable
     {
+        protected static Color alwaysShowColor = Color.green;
+
+        private int count;
+        private bool counted;
+
         public bool alwaysShow;
         public ResourceReadoutCategory parent;
 
         public abstract IEnumerable<ThingDef> ThingDefs { get; }
 
         public abstract IEnumerable<Tuple<ThingDef, ThingDef>> ThingDefsStuff { get; }
+
+        public abstract IEnumerable<ResourceReadoutItem> ThisAndAllDescendants { get; }
 
         protected virtual float SettingsInterfaceInteractionRectHeight => 24f;
 
@@ -33,6 +40,26 @@ namespace CustomResourceReadout
         public ResourceReadoutItem(ResourceReadoutCategory parent = null)
         {
             this.parent = parent;
+        }
+
+        protected abstract int CountSub(Dictionary<ThingDef, int> amounts);
+
+        public int Count(Dictionary<ThingDef, int> amounts)
+        {
+            if (!counted)
+            {
+                count = CountSub(amounts);
+                counted = true;
+            }
+            return count;
+        }
+
+        protected virtual void ResetCountSub() { }
+
+        public void ResetCount()
+        {
+            counted = false;
+            ResetCountSub();
         }
 
         protected abstract float DoSettingsInterfaceSub(Rect rect);
@@ -85,7 +112,12 @@ namespace CustomResourceReadout
             return height;
         }
 
-        public abstract float OnGUI(Rect rect, ResourceReadout readout, Dictionary<ThingDef, int> amounts);
+        public abstract float OnGUI(Rect rect, Dictionary<ThingDef, int> amounts);
+
+        protected void DoDot(Vector2 position, Color color)
+        {
+            GUI.DrawTexture(new Rect(position.x, position.y, 6f, 6f), TexUI.DotHighlight, ScaleMode.ScaleToFit, true, 1f, color, 0f, 0f);
+        }
 
         protected abstract ResourceReadoutItem CopySub();
 

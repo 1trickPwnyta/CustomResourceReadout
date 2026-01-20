@@ -73,17 +73,14 @@ namespace CustomResourceReadout
             {
                 if (selectedFile != null)
                 {
-                    ResourceReadoutMode mode = ResourceReadoutModeDef.Import(selectedFile);
-                    if (CustomResourceReadoutSettings.customModes.Any(m => m.name.EqualsIgnoreCase(mode.name)))
+                    CustomResourceReadoutMode mode = ResourceReadoutModeDef.Import(selectedFile);
+                    CustomResourceReadoutSettings.AddCustomResourceReadoutMode(mode, "Import".Translate(), successful =>
                     {
-                        Messages.Message("CustomResourceReadout_NameAlreadyExists".Translate(), MessageTypeDefOf.RejectInput, false);
-                    }
-                    else
-                    {
-                        CustomResourceReadoutSettings.customModes.Add(mode);
-                        CustomResourceReadoutSettings.editingMode = mode;
-                        Close();
-                    }
+                        if (successful)
+                        {
+                            Close();
+                        }
+                    });
                 }
                 else
                 {

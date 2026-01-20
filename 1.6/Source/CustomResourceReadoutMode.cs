@@ -7,11 +7,11 @@ using Verse;
 
 namespace CustomResourceReadout
 {
-    public class ResourceReadoutMode : IExposable, ILoadReferenceable, IRenameable
+    public class CustomResourceReadoutMode : IResourceReadoutMode, IExposable, ILoadReferenceable, IRenameable
     {
-        public static ResourceReadoutMode FromSimple()
+        public static CustomResourceReadoutMode FromSimple()
         {
-            ResourceReadoutMode mode = new ResourceReadoutMode();
+            CustomResourceReadoutMode mode = new CustomResourceReadoutMode();
             foreach (ThingDef def in DefDatabase<ThingDef>.AllDefsListForReading.Where(d => d.CountAsResource).OrderByDescending(d => d.resourceReadoutPriority))
             {
                 mode.items.Add(new ResourceReadoutLeaf(def, null) { alwaysShow = def.resourceReadoutAlwaysShow });
@@ -19,7 +19,7 @@ namespace CustomResourceReadout
             return mode;
         }
 
-        public static ResourceReadoutMode FromCategorized()
+        public static CustomResourceReadoutMode FromCategorized()
         {
             bool PopulateCategory(ThingCategoryDef def, ResourceReadoutCategory category)
             {
@@ -38,7 +38,7 @@ namespace CustomResourceReadout
                 return category.items.Any();
             }
 
-            ResourceReadoutMode mode = new ResourceReadoutMode();
+            CustomResourceReadoutMode mode = new CustomResourceReadoutMode();
             foreach (ThingCategoryDef def in DefDatabase<ThingCategoryDef>.AllDefsListForReading.Where(d => d.resourceReadoutRoot))
             {
                 ResourceReadoutCategory category = new ResourceReadoutCategory(def.iconPath, Color.white, null);
@@ -50,14 +50,14 @@ namespace CustomResourceReadout
             return mode;
         }
 
-        public static ResourceReadoutMode FromDef(ResourceReadoutModeDef def) => new ResourceReadoutMode(def.label) { items = def.items };
+        public static CustomResourceReadoutMode FromDef(ResourceReadoutModeDef def) => new CustomResourceReadoutMode(def.label) { items = def.Items };
 
         public string name;
-        public List<ResourceReadoutItem> items = new List<ResourceReadoutItem>();
+        private List<ResourceReadoutItem> items = new List<ResourceReadoutItem>();
 
-        public ResourceReadoutMode() { }
+        public CustomResourceReadoutMode() { }
 
-        public ResourceReadoutMode(string name) : this()
+        public CustomResourceReadoutMode(string name) : this()
         {
             this.name = name;
         }
@@ -67,6 +67,10 @@ namespace CustomResourceReadout
         public string BaseLabel => name;
 
         public string InspectLabel => name;
+
+        public List<ResourceReadoutItem> Items => items;
+
+        public string Name => name;
 
         public void ExposeData()
         {
@@ -87,9 +91,9 @@ namespace CustomResourceReadout
             items = items
         };
 
-        public ResourceReadoutMode Copy()
+        public CustomResourceReadoutMode Copy()
         {
-            ResourceReadoutMode copy = new ResourceReadoutMode();
+            CustomResourceReadoutMode copy = new CustomResourceReadoutMode();
             foreach (ResourceReadoutItem item in items)
             {
                 copy.items.Add(item.Copy());

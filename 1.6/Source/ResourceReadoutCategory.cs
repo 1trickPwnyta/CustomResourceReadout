@@ -10,7 +10,19 @@ namespace CustomResourceReadout
 {
     public class ResourceReadoutCategory : ResourceReadoutItem, IExposable
     {
-        private static Texture2D background = SolidColorMaterials.NewSolidColorTexture(new Color(0.1f, 0.1f, 0.1f, 0.6f));
+        private static Texture2D background;
+
+        private static Texture2D Background
+        {
+            get
+            {
+                if (background == null)
+                {
+                    background = SolidColorMaterials.NewSolidColorTexture(new Color(0.1f, 0.1f, 0.1f, 0.6f));
+                }
+                return background;
+            }
+        }
 
         private bool expanded;
         private bool uiExpanded;
@@ -69,6 +81,21 @@ namespace CustomResourceReadout
 
         private bool AlwaysShowThisOrDescendant => alwaysShow || items.Any(i => i.alwaysShow || i is ResourceReadoutCategory c && c.AlwaysShowThisOrDescendant);
 
+        public override IEnumerable<ResourceReadoutItem> ThisAndAllDescendants
+        {
+            get
+            {
+                yield return this;
+                foreach (ResourceReadoutItem child in items)
+                {
+                    foreach (ResourceReadoutItem item in child.ThisAndAllDescendants)
+                    {
+                        yield return item;
+                    }
+                }
+            }
+        }
+
         public ResourceReadoutCategory()
         {
         }
@@ -124,6 +151,10 @@ namespace CustomResourceReadout
                 GUI.color = iconColor;
                 Widgets.DrawTextureFitted(iconRect.ContractedBy(1f), Icon, 1f);
                 GUI.color = Color.white;
+                if (alwaysShow)
+                {
+                    DoDot(new Vector2(iconRect.xMax - 8f, iconRect.yMax - 8f), alwaysShowColor);
+                }
             }
             Rect labelRect = rect.RightPartPixels(rect.width - iconRect.width - expandRect.width);
             using (new TextBlock(TextAnchor.MiddleLeft)) Widgets.Label(labelRect, "CustomResourceReadout_ItemsInCategory".Translate(items.Count));
@@ -148,11 +179,9 @@ namespace CustomResourceReadout
             return rect.yMax - y;
         }
 
-        public override float OnGUI(Rect rect, ResourceReadout readout, Dictionary<ThingDef, int> amounts)
+        public override float OnGUI(Rect rect, Dictionary<ThingDef, int> amounts)
         {
-            int totalCount = ThingDefs.Distinct().Sum(d => amounts[d]);
-            Dictionary<Tuple<ThingDef, ThingDef>, int> amountsStuff = Find.CurrentMap.resourceCounter.GetCountedAmountsStuff();
-            totalCount += ThingDefsStuff.Distinct().Sum(t => amountsStuff.ContainsKey(t) ? amountsStuff[t] : 0);
+            int totalCount = Count(amounts);
             if (totalCount > 0 || AlwaysShowThisOrDescendant)
             {
                 rect.height = 24f;
@@ -169,7 +198,7 @@ namespace CustomResourceReadout
                 position.width = 80f;
                 position.yMax -= 3f;
                 position.yMin += 3f;
-                GUI.DrawTexture(position, background);
+                GUI.DrawTexture(position, Background);
                 if (Mouse.IsOver(mainRect))
                 {
                     GUI.DrawTexture(mainRect, TexUI.HighlightTex);
@@ -202,7 +231,7 @@ namespace CustomResourceReadout
                     {
                         Rect itemRect = rect;
                         itemRect.xMin += item.GUIXOffset;
-                        rect.y += item.OnGUI(itemRect, readout, amounts);
+                        rect.y += item.OnGUI(itemRect, amounts);
                     }
                 }
 
@@ -243,6 +272,16 @@ namespace CustomResourceReadout
                 copy.items.Add(itemCopy);
             }
             return copy;
+        }
+
+        protected override int CountSub(Dictionary<ThingDef, int> amounts) => items.Sum(i => i.Count(amounts));
+
+        protected override void ResetCountSub()
+        {
+            foreach (ResourceReadoutItem item in items)
+            {
+                item.ResetCount();
+            }
         }
     }
 }

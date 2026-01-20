@@ -21,7 +21,7 @@ namespace CustomResourceReadout
         public Dialog_SelectDefs(ResourceReadoutCategory parent)
         {
             this.parent = parent;
-            items = parent?.items ?? CustomResourceReadoutSettings.editingMode.items;
+            items = parent?.items ?? CustomResourceReadoutSettings.editingMode.Items;
             doCloseX = true;
             doCloseButton = true;
             closeOnClickedOutside = true;

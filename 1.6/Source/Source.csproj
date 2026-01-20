@@ -71,6 +71,7 @@
     <Compile Include="Dialog_SelectIcon.cs" />
     <Compile Include="Dialog_SelectStuff.cs" />
     <Compile Include="Dialog_SelectThingDefs.cs" />
+    <Compile Include="IResourceReadoutMode.cs" />
     <Compile Include="PatchTargeted_SettingsSaver.cs" />
     <Compile Include="Patch_ReorderableWidget.cs" />
     <Compile Include="ResourceReadoutItem.cs" />
@@ -82,7 +83,7 @@
     <Compile Include="CustomResourceReadoutMod.cs" />
     <Compile Include="ResourceReadoutCategory.cs" />
     <Compile Include="ResourceReadoutLeaf.cs" />
-    <Compile Include="ResourceReadoutMode.cs" />
+    <Compile Include="CustomResourceReadoutMode.cs" />
     <Compile Include="ResourceReadoutModeDef.cs" />
     <Compile Include="Utility.cs" />
   </ItemGroup>

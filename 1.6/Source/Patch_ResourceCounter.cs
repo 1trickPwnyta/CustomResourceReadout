@@ -15,10 +15,10 @@ namespace CustomResourceReadout
     {
         public static void Postfix()
         {
-            if (CustomResourceReadoutSettings.modeType == ResourceReadoutModeType.Custom)
+            if (CustomResourceReadoutSettings.CustomOrPresetMode)
             {
                 List<ThingDef> resources = typeof(ResourceCounter).Field("resources").GetValue(null) as List<ThingDef>;
-                resources.AddRange(CustomResourceReadoutSettings.currentMode.items.SelectMany(i => i.ThingDefs).Where(d => !resources.Contains(d)));
+                resources.AddRange(CustomResourceReadoutSettings.CurrentMode.Items.SelectMany(i => i.ThingDefs).Where(d => !resources.Contains(d)));
             }
         }
     }
@@ -29,8 +29,12 @@ namespace CustomResourceReadout
     {
         public static void Postfix(ResourceCounter __instance)
         {
-            if (CustomResourceReadoutSettings.modeType == ResourceReadoutModeType.Custom)
+            if (CustomResourceReadoutSettings.CustomOrPresetMode)
             {
+                foreach (ResourceReadoutItem item in CustomResourceReadoutSettings.CurrentMode.Items)
+                {
+                    item.ResetCount();
+                }
                 __instance.GetCountedAmountsStuff().Clear();
             }
         }
@@ -56,9 +60,9 @@ namespace CustomResourceReadout
 
         private static void UpdateResourceCountsStuff(ResourceCounter counter, Thing thing, Dictionary<ThingDef, int> countedAmountsNoStuff)
         {
-            if (CustomResourceReadoutSettings.modeType == ResourceReadoutModeType.Custom)
+            if (CustomResourceReadoutSettings.CustomOrPresetMode)
             {
-                if (thing.def.MadeFromStuff && CustomResourceReadoutSettings.currentMode.items.Any(i => i.ThingDefsStuff.Any(t => t.Item1 == thing.def)))
+                if (thing.def.MadeFromStuff && CustomResourceReadoutSettings.CurrentMode.Items.Any(i => i.ThingDefsStuff.Any(t => t.Item1 == thing.def)))
                 {
                     Dictionary<Tuple<ThingDef, ThingDef>, int> countedAmountsStuff = counter.GetCountedAmountsStuff();
                     Tuple<ThingDef, ThingDef> key = new Tuple<ThingDef, ThingDef>(thing.def, thing.Stuff);

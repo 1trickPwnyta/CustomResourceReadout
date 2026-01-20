@@ -1,4 +1,5 @@
 ﻿using RimWorld;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -11,14 +12,15 @@ namespace CustomResourceReadout
     {
         Simple,
         Categorized,
-        Custom
+        Custom,
+        Preset
     }
 
     public class CustomResourceReadoutSettings : ModSettings
     {
         public static bool dirty;
 
-        public static ResourceReadoutMode editingMode;
+        public static CustomResourceReadoutMode editingMode;
         public static ResourceReadoutItem deletedItem;
         private static Vector2 scrollPositionLeft, scrollPositionRight;
         private static float heightLeft, heightRight;
@@ -27,9 +29,10 @@ namespace CustomResourceReadout
         public static ResourceReadoutItem draggedItem;
         public static ResourceReadoutCategory dropIntoCategory;
 
-        public static ResourceReadoutModeType modeType;
-        public static ResourceReadoutMode currentMode;
-        public static List<ResourceReadoutMode> customModes = new List<ResourceReadoutMode>();
+        private static ResourceReadoutModeType modeType;
+        private static CustomResourceReadoutMode currentCustomMode;
+        private static ResourceReadoutModeDef currentPreset;
+        private static List<CustomResourceReadoutMode> customModes = new List<CustomResourceReadoutMode>();
 
         public static string CurrentModeLabel
         {
@@ -39,9 +42,39 @@ namespace CustomResourceReadout
                 {
                     case ResourceReadoutModeType.Simple: return "CustomResourceReadout_BasicUncategorized".Translate();
                     case ResourceReadoutModeType.Categorized: return "CustomResourceReadout_BasicCategorized".Translate();
-                    default: return currentMode.name;
+                    case ResourceReadoutModeType.Custom: return currentCustomMode.Name;
+                    case ResourceReadoutModeType.Preset: return currentPreset.Name;
+                    default: throw new System.Exception("Invalid modeType: " + modeType);
                 }
             }
+        }
+
+        public static bool CustomOrPresetMode => modeType == ResourceReadoutModeType.Custom || modeType == ResourceReadoutModeType.Preset;
+
+        public static IResourceReadoutMode CurrentMode => modeType == ResourceReadoutModeType.Custom ? currentCustomMode as IResourceReadoutMode : modeType == ResourceReadoutModeType.Preset ? currentPreset : null;
+
+        public static IEnumerable<CustomResourceReadoutMode> CustomResourceReadoutModes => customModes;
+
+        public static void ChangeResourceReadout(ResourceReadoutModeType type, CustomResourceReadoutMode mode = null, ResourceReadoutModeDef preset = null)
+        {
+            modeType = type;
+            if (type == ResourceReadoutModeType.Simple)
+            {
+                Prefs.ResourceReadoutCategorized = false;
+            }
+            else if (type == ResourceReadoutModeType.Categorized)
+            {
+                Prefs.ResourceReadoutCategorized = true;
+            }
+            currentCustomMode = mode;
+            currentPreset = preset;
+            ResourceCounter.ResetDefs();
+            foreach (Map map in Find.Maps)
+            {
+                map.resourceCounter.UpdateResourceCounts();
+            }
+            Utility.ClearCaches();
+            dirty = true;
         }
 
         public static void DoSettingsWindowContents(Rect inRect)
@@ -51,16 +84,26 @@ namespace CustomResourceReadout
             {
                 DoRightSide(inRect.RightPart(0.65f));
             }
-            Utility.ClearCountAsResourceCache();
+            Utility.ClearCaches();
         }
 
-        private static void AddResourceReadoutMode(ResourceReadoutMode mode, string renameLabel = null)
+        public static void AddCustomResourceReadoutMode(CustomResourceReadoutMode mode, string renameLabel = null, Action<bool> callback = null)
         {
-            mode.name = "CustomResourceReadout_EnterAUniqueName".Translate();
-            Find.WindowStack.Add(new Dialog_RenameResourceReadoutMode(mode, () =>
+            if (mode.name.NullOrEmpty())
             {
-                customModes.Add(mode);
-                editingMode = mode;
+                mode.name = "CustomResourceReadout_EnterAUniqueName".Translate();
+            }
+            Find.WindowStack.Add(new Dialog_RenameResourceReadoutMode(mode, successful =>
+            {
+                if (successful)
+                {
+                    customModes.Add(mode);
+                    editingMode = mode;
+                }
+                if (callback != null)
+                {
+                    callback(successful);
+                }
             }, renameLabel));
         }
 
@@ -77,7 +120,7 @@ namespace CustomResourceReadout
             {
                 reorderableModeGroup = ReorderableWidget.NewGroup((from, to) =>
                 {
-                    ResourceReadoutMode mode = customModes[from];
+                    CustomResourceReadoutMode mode = customModes[from];
                     customModes.Insert(to, mode);
                     customModes.RemoveAt(from < to ? from : from + 1);
                 }, ReorderableDirection.Vertical, outRect);
@@ -86,8 +129,8 @@ namespace CustomResourceReadout
             Widgets.BeginScrollView(outRect, ref scrollPositionLeft, viewRect);
             
             Rect modeRect = new Rect(viewRect.x, viewRect.y, viewRect.width, 30f);
-            ResourceReadoutMode deletedMode = null;
-            foreach (ResourceReadoutMode mode in customModes)
+            CustomResourceReadoutMode deletedMode = null;
+            foreach (CustomResourceReadoutMode mode in customModes)
             {
                 Rect innerRect = modeRect.ContractedBy(1f);
                 if (editingMode == mode)
@@ -118,7 +161,7 @@ namespace CustomResourceReadout
                 buttonRect.x -= buttonRect.width;
                 if (Widgets.ButtonImage(buttonRect.ContractedBy(1f), TexButton.Copy, tooltip: "Copy".Translate()))
                 {
-                    AddResourceReadoutMode(mode.Copy(), "Copy".Translate());
+                    AddCustomResourceReadoutMode(mode.Copy(), "Copy".Translate());
                 }
                 buttonRect.x -= buttonRect.width;
                 if (Widgets.ButtonImage(buttonRect.ContractedBy(1f), TexButton.Rename, tooltip: "Rename".Translate()))
@@ -144,10 +187,13 @@ namespace CustomResourceReadout
                 {
                     editingMode = null;
                 }
-                if (currentMode == deletedMode)
+                if (currentCustomMode == deletedMode)
                 {
-                    currentMode = null;
-                    modeType = ResourceReadoutModeType.Simple;
+                    currentCustomMode = null;
+                    if (modeType == ResourceReadoutModeType.Custom)
+                    {
+                        ChangeResourceReadout(ResourceReadoutModeType.Simple);
+                    }
                 }
             }
 
@@ -162,15 +208,15 @@ namespace CustomResourceReadout
                 {
                     new FloatMenuOption("CustomResourceReadout_SimpleCopy".Translate(), () =>
                     {
-                        AddResourceReadoutMode(ResourceReadoutMode.FromSimple(), "CustomResourceReadout_NameNewMode".Translate());
+                        AddCustomResourceReadoutMode(CustomResourceReadoutMode.FromSimple(), "CustomResourceReadout_NameNewMode".Translate());
                     }),
                     new FloatMenuOption("CustomResourceReadout_CategorizedCopy".Translate(), () =>
                     {
-                        AddResourceReadoutMode(ResourceReadoutMode.FromCategorized(), "CustomResourceReadout_NameNewMode".Translate());
+                        AddCustomResourceReadoutMode(CustomResourceReadoutMode.FromCategorized(), "CustomResourceReadout_NameNewMode".Translate());
                     }),
                     new FloatMenuOption("CustomResourceReadout_NewCustomResourceReadoutMode".Translate(), () =>
                     {
-                        AddResourceReadoutMode(new ResourceReadoutMode(), "CustomResourceReadout_NameNewMode".Translate());
+                        AddCustomResourceReadoutMode(new CustomResourceReadoutMode(), "CustomResourceReadout_NameNewMode".Translate());
                     })
                 }.ToList()));
             }
@@ -193,7 +239,7 @@ namespace CustomResourceReadout
                 {
                     if (draggedItem != null && dropIntoCategory == null)
                     {
-                        List<ResourceReadoutItem> draggableItems = editingMode.items.SelectMany(i => i.DraggableItems).ToList();
+                        List<ResourceReadoutItem> draggableItems = editingMode.Items.SelectMany(i => i.DraggableItems).ToList();
                         bool accepted = true;
                         if (to < draggableItems.Count && draggableItems[to].parent?.CanAccept(draggedItem) == false)
                         {
@@ -201,7 +247,7 @@ namespace CustomResourceReadout
                         }
                         if (to >= draggableItems.Count || draggableItems[to].parent == null)
                         {
-                            if (!editingMode.items.CanAccept(draggedItem))
+                            if (!editingMode.Items.CanAccept(draggedItem))
                             {
                                 accepted = false;
                             }
@@ -218,7 +264,7 @@ namespace CustomResourceReadout
                         }
                         else
                         {
-                            editingMode.items.Remove(draggedItem);
+                            editingMode.Items.Remove(draggedItem);
                         }
 
                         if (to < draggableItems.Count)
@@ -230,13 +276,13 @@ namespace CustomResourceReadout
                             }
                             else
                             {
-                                editingMode.items.Insert(editingMode.items.IndexOf(insertBeforeItem), draggedItem);
+                                editingMode.Items.Insert(editingMode.Items.IndexOf(insertBeforeItem), draggedItem);
                             }
                             draggedItem.parent = insertBeforeItem.parent;
                         }
                         else
                         {
-                            editingMode.items.Add(draggedItem);
+                            editingMode.Items.Add(draggedItem);
                             draggedItem.parent = null;
                         }
                     }
@@ -247,13 +293,13 @@ namespace CustomResourceReadout
             Widgets.BeginScrollView(outRect, ref scrollPositionRight, viewRect);
 
             Rect itemRect = new Rect(viewRect.x, viewRect.y, viewRect.width, 0f);
-            foreach (ResourceReadoutItem item in editingMode.items)
+            foreach (ResourceReadoutItem item in editingMode.Items)
             {
                 itemRect.y += item.DoSettingsInterface(itemRect);
             }
             if (deletedItem != null)
             {
-                editingMode.items.Remove(deletedItem);
+                editingMode.Items.Remove(deletedItem);
                 deletedItem = null;
             }
 
@@ -268,7 +314,7 @@ namespace CustomResourceReadout
                     new FloatMenuOption("CustomResourceReadout_AddCategories".Translate(), () => Find.WindowStack.Add(new Dialog_AddThingCategoryDefs(null))),
                     new FloatMenuOption("CustomResourceReadout_AddEmptyCategory".Translate(), () => Find.WindowStack.Add(new Dialog_SelectIcon("CustomResourceReadout_AddEmptyCategory".Translate(), (p, c) =>
                     {
-                        editingMode.items.Add(new ResourceReadoutCategory(p, c, null));
+                        editingMode.Items.Add(new ResourceReadoutCategory(p, c, null));
                     })))
                 }.ToList()));
             }
@@ -286,7 +332,7 @@ namespace CustomResourceReadout
                     }
                     else
                     {
-                        editingMode.items.Remove(draggedItem);
+                        editingMode.Items.Remove(draggedItem);
                     }
                     dropIntoCategory.items.Add(draggedItem);
                     draggedItem.parent = dropIntoCategory;
@@ -301,15 +347,20 @@ namespace CustomResourceReadout
         public override void ExposeData()
         {
             Scribe_Values.Look(ref modeType, "modeType");
-            Scribe_References.Look(ref currentMode, "currentMode");
+            Scribe_References.Look(ref currentCustomMode, "currentMode");
+            Scribe_Defs.Look(ref currentPreset, "currentPreset");
             Scribe_Collections.Look(ref customModes, "customModes", LookMode.Deep);
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {
                 if (customModes == null)
                 {
-                    customModes = new List<ResourceReadoutMode>();
+                    customModes = new List<CustomResourceReadoutMode>();
                 }
                 editingMode = customModes.FirstOrDefault();
+                if (modeType == ResourceReadoutModeType.Preset && currentPreset == null)
+                {
+                    ChangeResourceReadout(ResourceReadoutModeType.Simple);
+                }
             }
         }
     }

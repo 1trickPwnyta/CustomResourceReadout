@@ -5,27 +5,31 @@ using Verse;
 
 namespace CustomResourceReadout
 {
-    public class ResourceReadoutModeDef : Def, IExposable
+    public class ResourceReadoutModeDef : Def, IResourceReadoutMode, IExposable
     {
         public static string exportPath = Path.Combine(GenFilePaths.SaveDataFolderPath, "CustomResourceReadoutExport");
         public static string exportExt = ".xml";
 
-        public static ResourceReadoutMode Import(FileInfo file)
+        public static CustomResourceReadoutMode Import(FileInfo file)
         {
             ResourceReadoutModeDef def = null;
             Scribe.loader.InitLoading(file.FullName);
             try
             {
-                Scribe_Deep.Look(ref def, "ResourceReadoutModeDef");
+                Scribe_Deep.Look(ref def, "CustomResourceReadout.ResourceReadoutModeDef");
             }
             finally
             {
                 Scribe.loader.FinalizeLoading();
             }
-            return ResourceReadoutMode.FromDef(def);
+            return CustomResourceReadoutMode.FromDef(def);
         }
 
         public List<ResourceReadoutItem> items = new List<ResourceReadoutItem>();
+
+        public List<ResourceReadoutItem> Items => items;
+
+        public string Name => label;
 
         public void ExposeData()
         {
@@ -41,7 +45,7 @@ namespace CustomResourceReadout
             try
             {
                 ResourceReadoutModeDef def = this;
-                Scribe_Deep.Look(ref def, "ResourceReadoutModeDef");
+                Scribe_Deep.Look(ref def, "CustomResourceReadout.ResourceReadoutModeDef");
             }
             finally
             {

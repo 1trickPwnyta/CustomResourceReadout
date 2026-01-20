@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <LanguageData>
-	<CustomResourceReadout_ResourceReadoutButtonTip>Change the resource readout mode.\n\nCurrent mode: {0}</CustomResourceReadout_ResourceReadoutButtonTip>
+	<CustomResourceReadout_ResourceReadoutButtonTip>Change the resource readout mode.\n\nCurrent mode: </CustomResourceReadout_ResourceReadoutButtonTip>
 	<CustomResourceReadout_CustomResourceReadoutModes>Custom resource readout modes</CustomResourceReadout_CustomResourceReadoutModes>
 	<CustomResourceReadout_NewCustomResourceReadoutMode>Empty resource readout mode</CustomResourceReadout_NewCustomResourceReadoutMode>
 	<CustomResourceReadout_SimpleCopy>Use simple mode as template</CustomResourceReadout_SimpleCopy>
@@ -28,4 +28,7 @@
 	<CustomResourceReadout_AlwaysShowDesc>Enabling this will force the resource readout to always show this item even when the count is zero.</CustomResourceReadout_AlwaysShowDesc>
 	<CustomResourceReadout_EditCustomResourceReadoutModes>Settings</CustomResourceReadout_EditCustomResourceReadoutModes>
 	<CustomResourceReadout_NameNewMode>New mode</CustomResourceReadout_NameNewMode>
+	<CustomResourceReadout_Presets>Presets...</CustomResourceReadout_Presets>
+	<CustomResourceReadout_CountAll>Count all</CustomResourceReadout_CountAll>
+	<CustomResourceReadout_CountAllDesc>Enabling this will count all resources on the current map regardless of whether they are stored or not. Slightly impacts performance.</CustomResourceReadout_CountAllDesc>
 </LanguageData>
