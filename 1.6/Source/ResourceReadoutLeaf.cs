@@ -137,9 +137,13 @@ namespace CustomResourceReadout
             if (stuff == null)
             {
                 count = amounts.ContainsKey(def) ? amounts[def] : 0;
-                if (countAll || true)
+                if (countAll)
                 {
                     count = Find.CurrentMap.listerThings.ThingsOfDef(def).Sum(t => t.stackCount);
+                    if (def.Minifiable)
+                    {
+                        count += Find.CurrentMap.listerThings.ThingsInGroup(ThingRequestGroup.MinifiedThing).Where(m => m.GetInnerIfMinified().def == def).Count();
+                    }
                 }
             }
             else
@@ -147,9 +151,13 @@ namespace CustomResourceReadout
                 Dictionary<Tuple<ThingDef, ThingDef>, int> countedAmountsStuff = Find.CurrentMap.resourceCounter.GetCountedAmountsStuff();
                 Tuple<ThingDef, ThingDef> key = new Tuple<ThingDef, ThingDef>(def, stuff);
                 count = countedAmountsStuff.ContainsKey(key) ? countedAmountsStuff[key] : 0;
-                if (countAll || true)
+                if (countAll)
                 {
                     count = Find.CurrentMap.listerThings.ThingsOfDef(def).Where(t => t.Stuff == stuff).Sum(t => t.stackCount);
+                    if (def.Minifiable)
+                    {
+                        count += Find.CurrentMap.listerThings.ThingsInGroup(ThingRequestGroup.MinifiedThing).Select(m => m.GetInnerIfMinified()).Where(i => i.def == def && i.Stuff == stuff).Count();
+                    }
                 }
             }
             return count;

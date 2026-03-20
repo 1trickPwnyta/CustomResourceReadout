@@ -3,7 +3,7 @@ using Verse;
 
 namespace CustomResourceReadout
 {
-    public class Dialog_ExportResourceReadoutMode : Dialog_Rename<CustomResourceReadoutMode>
+    public class Dialog_ExportResourceReadoutMode : Dialog_CustomRename<CustomResourceReadoutMode>
     {
         private CustomResourceReadoutMode exporting;
 
@@ -11,6 +11,8 @@ namespace CustomResourceReadout
         {
             this.exporting = exporting;
         }
+
+        public override TaggedString Title => "CustomResourceReadout_Export".Translate();
 
         protected override int MaxNameLength => 64;
 

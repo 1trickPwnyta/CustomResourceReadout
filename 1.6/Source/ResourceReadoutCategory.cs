@@ -8,6 +8,7 @@ using Verse.Sound;
 
 namespace CustomResourceReadout
 {
+    [StaticConstructorOnStartup]
     public class ResourceReadoutCategory : ResourceReadoutItem, IExposable
     {
         private static Texture2D background;

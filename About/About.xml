@@ -7,11 +7,18 @@
 	<supportedVersions>
 		<li>1.6</li>
 	</supportedVersions>
-	<description><![CDATA[
+	<description><![CDATA[Do you prefer your resource readout categorized or simple? Maybe some combination of both? Maybe there are things you want to see in the readout that aren't normally there? It's time to set up your resource readout exactly the way you want it!
+
+Create a new mode to use instead of categorized mode (don't worry, categorized mode isn't going away) where you can add the resources you want to see counts for and categorize them (or don't) in any way you want.
+
+Maybe you don't like seeing the number of shards you have under the same readout category as components. You could create a separate category for them and other Anomaly-related things, or you could just not have it show them at all.
+
+You can tell the resource readout to count just about anything in the game. If you don't want to limit the search to just what's in your stockpiles and instead count everything on the map, you can do that, too.
 
 ________________________________________________
 
 <size=18px><color=#5aa9d6>Credits</color></size>
+  &#8226; Inspiration: Koester
   &#8226; Mod icon: twitter.com/mouse_draws
 	]]></description>
 	<url>https://github.com/1trickPwnyta/CustomResourceReadout</url>

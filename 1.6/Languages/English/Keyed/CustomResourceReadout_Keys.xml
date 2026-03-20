@@ -31,4 +31,5 @@
 	<CustomResourceReadout_Presets>Presets...</CustomResourceReadout_Presets>
 	<CustomResourceReadout_CountAll>Count all</CustomResourceReadout_CountAll>
 	<CustomResourceReadout_CountAllDesc>Enabling this will count all resources on the current map regardless of whether they are stored or not. Slightly impacts performance.</CustomResourceReadout_CountAllDesc>
+	<CustomResourceReadout_Export>Export</CustomResourceReadout_Export>
 </LanguageData>

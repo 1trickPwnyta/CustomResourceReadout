@@ -69,11 +69,11 @@ namespace CustomResourceReadout
             currentCustomMode = mode;
             currentPreset = preset;
             ResourceCounter.ResetDefs();
+            Utility.ClearCaches();
             foreach (Map map in Find.Maps)
             {
                 map.resourceCounter.UpdateResourceCounts();
             }
-            Utility.ClearCaches();
             dirty = true;
         }
 
@@ -154,7 +154,7 @@ namespace CustomResourceReadout
                     deletedMode = mode;
                 }
                 buttonRect.x -= buttonRect.width;
-                if (Widgets.ButtonImage(buttonRect.ContractedBy(1f), TexButton.Save, tooltip: "Export".Translate()))
+                if (Widgets.ButtonImage(buttonRect.ContractedBy(1f), TexButton.Save, tooltip: "CustomResourceReadout_Export".Translate()))
                 {
                     Find.WindowStack.Add(new Dialog_ExportResourceReadoutMode(mode));
                 }
