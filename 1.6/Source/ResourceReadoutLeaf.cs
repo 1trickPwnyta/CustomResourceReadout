@@ -97,7 +97,7 @@ namespace CustomResourceReadout
 
         public override float OnGUI(Rect rect, Dictionary<ThingDef, int> amounts)
         {
-            int count = Count(amounts);
+            int count = Count(amounts, Find.CurrentMap);
             if (count > 0 || alwaysShow)
             {
                 rect.height = 24f;
@@ -131,7 +131,7 @@ namespace CustomResourceReadout
             return copy;
         }
 
-        protected override int CountSub(Dictionary<ThingDef, int> amounts)
+        protected override int CountSub(Dictionary<ThingDef, int> amounts, Map map)
         {
             int count;
             if (stuff == null)

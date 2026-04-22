@@ -28,11 +28,14 @@ namespace CustomResourceReadout
         public static int reorderableItemGroup;
         public static ResourceReadoutItem draggedItem;
         public static ResourceReadoutCategory dropIntoCategory;
+        private static string readoutOffsetXBuffer, readoutOffsetYBuffer;
 
         private static ResourceReadoutModeType modeType;
         private static CustomResourceReadoutMode currentCustomMode;
         private static ResourceReadoutModeDef currentPreset;
         private static List<CustomResourceReadoutMode> customModes = new List<CustomResourceReadoutMode>();
+        public static int readoutOffsetX = 0;
+        public static int readoutOffsetY = 0;
 
         public static string CurrentModeLabel
         {
@@ -79,12 +82,30 @@ namespace CustomResourceReadout
 
         public static void DoSettingsWindowContents(Rect inRect)
         {
+            DoGeneralSettings(inRect.TopPartPixels(50f));
+            inRect.yMin += 55f;
+            Widgets.DrawLineHorizontal(inRect.x, inRect.y - 5f, inRect.width);
             DoLeftSide(inRect.LeftPart(0.35f));
             if (editingMode != null)
             {
                 DoRightSide(inRect.RightPart(0.65f));
             }
             Utility.ClearCaches();
+        }
+
+        private static void DoGeneralSettings(Rect top)
+        {
+            top.yMin += 5f;
+            top.yMax -= 5f;
+            Rect labelRect = top.LeftHalf();
+            using (new TextBlock(TextAnchor.MiddleLeft)) Widgets.Label(labelRect, "CustomResourceReadout_UIOffset".Translate());
+            Rect controlsRect = top.RightHalf();
+            Rect xRect = controlsRect.LeftHalf();
+            using (new TextBlock(TextAnchor.MiddleRight)) Widgets.Label(xRect.LeftPart(0.1f), "X: ");
+            Widgets.IntEntry(xRect.RightPart(0.9f).ContractedBy(5f), ref readoutOffsetX, ref readoutOffsetXBuffer);
+            Rect yRect = controlsRect.RightHalf();
+            using (new TextBlock(TextAnchor.MiddleRight)) Widgets.Label(yRect.LeftPart(0.1f), "Y: ");
+            Widgets.IntEntry(yRect.RightPart(0.9f).ContractedBy(5f), ref readoutOffsetY, ref readoutOffsetYBuffer);
         }
 
         public static void AddCustomResourceReadoutMode(CustomResourceReadoutMode mode, string renameLabel = null, Action<bool> callback = null)
@@ -350,6 +371,8 @@ namespace CustomResourceReadout
             Scribe_References.Look(ref currentCustomMode, "currentMode");
             Scribe_Defs.Look(ref currentPreset, "currentPreset");
             Scribe_Collections.Look(ref customModes, "customModes", LookMode.Deep);
+            Scribe_Values.Look(ref readoutOffsetX, "readoutOffsetX", 0);
+            Scribe_Values.Look(ref readoutOffsetY, "readoutOffsetY", 0);
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {
                 if (customModes == null)

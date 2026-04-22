@@ -18,9 +18,9 @@ namespace CustomResourceReadout
             {
                 if (Event.current.type != EventType.Layout && Current.ProgramState == ProgramState.Playing && Find.MainTabsRoot.OpenTab != MainButtonDefOf.Menu)
                 {
-                    GenUI.DrawTextWinterShadow(new Rect(256f, 512f, -256f, -512f));
+                    GenUI.DrawTextWinterShadow(new Rect(256f + CustomResourceReadoutSettings.readoutOffsetX, 512f + CustomResourceReadoutSettings.readoutOffsetY, -256f, -512f));
                     Text.Font = GameFont.Small;
-                    Rect outRect = new Rect(2f, 7f, 124f, (UI.screenHeight - 7) - 200f);
+                    Rect outRect = new Rect(2f + CustomResourceReadoutSettings.readoutOffsetX, 7f + CustomResourceReadoutSettings.readoutOffsetY, 124f, (UI.screenHeight - CustomResourceReadoutSettings.readoutOffsetY - 7) - 200f);
                     Rect viewRect = new Rect(0f, 0f, outRect.width, ___lastDrawnHeight);
                     bool scroll = viewRect.height > outRect.height;
                     if (scroll)

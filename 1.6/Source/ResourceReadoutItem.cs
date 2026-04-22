@@ -12,7 +12,7 @@ namespace CustomResourceReadout
         protected static Color alwaysShowColor = Color.green;
 
         private int count;
-        private bool counted;
+        private Map mapCounted;
 
         public bool alwaysShow;
         public ResourceReadoutCategory parent;
@@ -42,14 +42,14 @@ namespace CustomResourceReadout
             this.parent = parent;
         }
 
-        protected abstract int CountSub(Dictionary<ThingDef, int> amounts);
+        protected abstract int CountSub(Dictionary<ThingDef, int> amounts, Map map);
 
-        public int Count(Dictionary<ThingDef, int> amounts)
+        public int Count(Dictionary<ThingDef, int> amounts, Map map)
         {
-            if (!counted)
+            if (map != mapCounted)
             {
-                count = CountSub(amounts);
-                counted = true;
+                count = CountSub(amounts, map);
+                mapCounted = map;
             }
             return count;
         }
@@ -58,7 +58,7 @@ namespace CustomResourceReadout
 
         public void ResetCount()
         {
-            counted = false;
+            mapCounted = null;
             ResetCountSub();
         }
 
