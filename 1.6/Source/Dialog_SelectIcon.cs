@@ -12,7 +12,6 @@ namespace CustomResourceReadout
     {
         private List<string> iconPathList;
         private Dictionary<string, Texture2D> icons;
-        private List<Color> colors = new[] { Color.white, Color.black }.Concat(Enumerable.Range(0, 32).Select(i => Color.HSVToRGB(i / 32f, 0.7f, 1f))).ToList();
 
         private string title;
         private Action<string, Color> callback;
@@ -67,7 +66,7 @@ namespace CustomResourceReadout
             }
             if (Widgets.ButtonInvisible(colorRect))
             {
-                Find.WindowStack.Add(new Dialog_ChooseColor("CustomResourceReadout_SelectColor".Translate(), selectedIconColor, colors, c => selectedIconColor = c));
+                Find.WindowStack.Add(new Dialog_SelectIconColor(selectedIconColor, c => selectedIconColor = c));
             }
             inRect.yMin += 30f;
 

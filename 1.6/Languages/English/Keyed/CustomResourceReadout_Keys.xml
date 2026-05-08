@@ -3,7 +3,7 @@
 	<CustomResourceReadout_ResourceReadoutButtonTip>Change the resource readout mode.\n\nCurrent mode: </CustomResourceReadout_ResourceReadoutButtonTip>
 	<CustomResourceReadout_CustomResourceReadoutModes>Custom resource readout modes</CustomResourceReadout_CustomResourceReadoutModes>
 	<CustomResourceReadout_NewCustomResourceReadoutMode>Empty resource readout mode</CustomResourceReadout_NewCustomResourceReadoutMode>
-	<CustomResourceReadout_SimpleCopy>Use simple mode as template</CustomResourceReadout_SimpleCopy>
+	<CustomResourceReadout_SimpleCopy>Use default mode as template</CustomResourceReadout_SimpleCopy>
 	<CustomResourceReadout_CategorizedCopy>Use categorized mode as template</CustomResourceReadout_CategorizedCopy>
 	<CustomResourceReadout_AddNewMode>Add resource readout mode...</CustomResourceReadout_AddNewMode>
 	<CustomResourceReadout_EnterAUniqueName>Enter a unique name.</CustomResourceReadout_EnterAUniqueName>
@@ -12,7 +12,7 @@
 	<CustomResourceReadout_AddResources>Select resources</CustomResourceReadout_AddResources>
 	<CustomResourceReadout_AddCategories>Add categories</CustomResourceReadout_AddCategories>
 	<CustomResourceReadout_AddEmptyCategory>Add custom category</CustomResourceReadout_AddEmptyCategory>
-	<CustomResourceReadout_BasicUncategorized>Simple</CustomResourceReadout_BasicUncategorized>
+	<CustomResourceReadout_BasicUncategorized>Default</CustomResourceReadout_BasicUncategorized>
 	<CustomResourceReadout_BasicCategorized>Categorized</CustomResourceReadout_BasicCategorized>
 	<CustomResourceReadout_ItemsInCategory>({0} items)</CustomResourceReadout_ItemsInCategory>
 	<CustomResourceReadout_SelectIcon>Select an icon.</CustomResourceReadout_SelectIcon>

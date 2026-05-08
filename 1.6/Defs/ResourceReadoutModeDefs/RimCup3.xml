@@ -1,0 +1,120 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+	<CustomResourceReadout.ResourceReadoutModeDef>
+		<defName>RimCup3_1778207415551</defName>
+		<label>RimCup 3</label>
+		<items>
+			<li Class="CustomResourceReadout.ResourceReadoutCategory">
+				<iconPath>Things/Item/Health/HealthItem</iconPath>
+				<iconColor>RGBA(0.750, 0.750, 0.750, 1.000)</iconColor>
+				<items>
+					<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+						<def>Heart</def>
+					</li>
+					<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+						<def>Liver</def>
+					</li>
+					<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+						<def>Lung</def>
+					</li>
+					<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+						<def>Kidney</def>
+					</li>
+				</items>
+			</li>
+			<li Class="CustomResourceReadout.ResourceReadoutCategory">
+				<iconPath>Things/Item/Health/HealthItem</iconPath>
+				<iconColor>RGBA(0.604, 0.486, 0.408, 1.000)</iconColor>
+				<items>
+					<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+						<def>SimpleProstheticLeg</def>
+					</li>
+					<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+						<def>SimpleProstheticArm</def>
+					</li>
+					<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+						<def>SimpleProstheticHeart</def>
+					</li>
+					<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+						<def>CochlearImplant</def>
+					</li>
+				</items>
+			</li>
+			<li Class="CustomResourceReadout.ResourceReadoutCategory">
+				<iconPath>Things/Item/Health/HealthItem</iconPath>
+				<iconColor>RGBA(0.741, 0.663, 0.463, 1.000)</iconColor>
+				<items>
+					<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+						<def>BionicEye</def>
+					</li>
+					<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+						<def>BionicArm</def>
+					</li>
+					<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+						<def>BionicLeg</def>
+					</li>
+					<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+						<def>BionicSpine</def>
+					</li>
+					<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+						<def>BionicHeart</def>
+					</li>
+					<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+						<def>BionicStomach</def>
+					</li>
+					<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+						<def>BionicEar</def>
+					</li>
+					<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+						<def>BionicTongue</def>
+					</li>
+					<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+						<def>BionicJaw</def>
+					</li>
+				</items>
+			</li>
+			<li Class="CustomResourceReadout.ResourceReadoutCategory">
+				<iconPath>Things/Item/Health/HealthItem</iconPath>
+				<iconColor>RGBA(0.608, 0.647, 0.580, 1.000)</iconColor>
+				<items>
+					<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+						<def>ArchotechEye</def>
+					</li>
+					<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+						<def>ArchotechArm</def>
+					</li>
+					<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+						<def>ArchotechLeg</def>
+					</li>
+				</items>
+			</li>
+			<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+				<def>MedicineHerbal</def>
+			</li>
+			<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+				<def>MedicineIndustrial</def>
+			</li>
+			<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+				<def>MedicineUltratech</def>
+			</li>
+			<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+				<def>MechSerumHealer</def>
+			</li>
+			<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+				<def>MechSerumResurrector</def>
+			</li>
+			<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+				<def>Penoxycyline</def>
+			</li>
+			<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+				<def>WakeUp</def>
+			</li>
+			<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+				<def>GoJuice</def>
+			</li>
+			<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+				<def>Luciferium</def>
+			</li>
+		</items>
+	</CustomResourceReadout.ResourceReadoutModeDef>
+</Defs>

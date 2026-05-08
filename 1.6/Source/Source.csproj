@@ -69,6 +69,7 @@
     <Compile Include="Dialog_SelectDefs.cs" />
     <Compile Include="Dialog_AddThingCategoryDefs.cs" />
     <Compile Include="Dialog_SelectIcon.cs" />
+    <Compile Include="Dialog_SelectIconColor.cs" />
     <Compile Include="Dialog_SelectStuff.cs" />
     <Compile Include="Dialog_SelectThingDefs.cs" />
     <Compile Include="IResourceReadoutMode.cs" />

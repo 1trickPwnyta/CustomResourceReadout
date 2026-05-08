@@ -3,7 +3,7 @@
 	<name>Custom Resource Readout</name>
 	<author>1trickPwnyta</author>
 	<packageId>customresourcereadout.1trickPwnyta</packageId>
-	<modVersion>1.1.0</modVersion>
+	<modVersion>1.1.1</modVersion>
 	<supportedVersions>
 		<li>1.6</li>
 	</supportedVersions>
@@ -15,13 +15,19 @@ Maybe you don't like seeing the number of shards you have under the same readout
 
 You can tell the resource readout to count just about anything in the game. If you don't want to limit the search to just what's in your stockpiles and instead count everything on the map, you can do that, too.
 
+<size=18px><color=#5aa9d6>Known Issues</color></size>
+
+Disabling other mods or DLCs can cause errors in this mod's settings dialog. This will be addressed in a future update.
+
 ________________________________________________
 
 <size=18px><color=#5aa9d6>Updates</color></size>
 
+05/07/2026: Add RimCup 3 preset. Add additional icon color options. Fix import dialog text and change name of simple mode to default.
 04/22/2026: Add option to offset the readout on UI for custom modes, fix bug with switching maps
 
 <size=18px><color=#5aa9d6>Credits</color></size>
+
   &#8226; Inspiration: Koester
   &#8226; Mod icon: twitter.com/mouse_draws
 	]]></description>

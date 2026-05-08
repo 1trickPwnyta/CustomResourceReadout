@@ -74,7 +74,7 @@ namespace CustomResourceReadout
                 if (selectedFile != null)
                 {
                     CustomResourceReadoutMode mode = ResourceReadoutModeDef.Import(selectedFile);
-                    CustomResourceReadoutSettings.AddCustomResourceReadoutMode(mode, "Import".Translate(), successful =>
+                    CustomResourceReadoutSettings.AddCustomResourceReadoutMode(mode, "CustomResourceReadout_ImportMode".Translate(), successful =>
                     {
                         if (successful)
                         {
