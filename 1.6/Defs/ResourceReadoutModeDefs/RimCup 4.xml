@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+	<CustomResourceReadout.ResourceReadoutModeDef>
+		<defName>RimCup4_1792723549692</defName>
+		<label>RimCup 4</label>
+		<items>
+			<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+				<alwaysShow>True</alwaysShow>
+				<def>Shell_HighExplosive</def>
+			</li>
+			<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+				<alwaysShow>True</alwaysShow>
+				<def>Shell_Incendiary</def>
+			</li>
+			<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+				<alwaysShow>True</alwaysShow>
+				<def>Shell_EMP</def>
+			</li>
+			<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+				<alwaysShow>True</alwaysShow>
+				<def>Shell_Smoke</def>
+			</li>
+			<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+				<alwaysShow>True</alwaysShow>
+				<def>Shell_Firefoam</def>
+			</li>
+			<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+				<alwaysShow>True</alwaysShow>
+				<def>Shell_AntigrainWarhead</def>
+			</li>
+		</items>
+	</CustomResourceReadout.ResourceReadoutModeDef>
+</Defs>
