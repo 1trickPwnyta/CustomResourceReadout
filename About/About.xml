@@ -3,7 +3,7 @@
 	<name>Custom Resource Readout</name>
 	<author>1trickPwnyta</author>
 	<packageId>customresourcereadout.1trickPwnyta</packageId>
-	<modVersion>1.1.2</modVersion>
+	<modVersion>1.1.3</modVersion>
 	<supportedVersions>
 		<li>1.6</li>
 	</supportedVersions>
@@ -23,6 +23,7 @@ ________________________________________________
 
 <size=18px><color=#5aa9d6>Updates</color></size>
 
+10/23/2026: Update RimCup 4 preset.
 10/22/2026: Add RimCup 4 preset. Remove RimCup 3 preset.
 05/07/2026: Add RimCup 3 preset. Add additional icon color options. Fix import dialog text and change name of simple mode to default.
 04/22/2026: Add option to offset the readout on UI for custom modes, fix bug with switching maps

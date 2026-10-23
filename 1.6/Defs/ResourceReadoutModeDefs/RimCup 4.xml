@@ -6,15 +6,7 @@
 		<items>
 			<li Class="CustomResourceReadout.ResourceReadoutLeaf">
 				<alwaysShow>True</alwaysShow>
-				<def>Shell_HighExplosive</def>
-			</li>
-			<li Class="CustomResourceReadout.ResourceReadoutLeaf">
-				<alwaysShow>True</alwaysShow>
-				<def>Shell_Incendiary</def>
-			</li>
-			<li Class="CustomResourceReadout.ResourceReadoutLeaf">
-				<alwaysShow>True</alwaysShow>
-				<def>Shell_EMP</def>
+				<def>Shell_Firefoam</def>
 			</li>
 			<li Class="CustomResourceReadout.ResourceReadoutLeaf">
 				<alwaysShow>True</alwaysShow>
@@ -22,7 +14,15 @@
 			</li>
 			<li Class="CustomResourceReadout.ResourceReadoutLeaf">
 				<alwaysShow>True</alwaysShow>
-				<def>Shell_Firefoam</def>
+				<def>Shell_EMP</def>
+			</li>
+			<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+				<alwaysShow>True</alwaysShow>
+				<def>Shell_HighExplosive</def>
+			</li>
+			<li Class="CustomResourceReadout.ResourceReadoutLeaf">
+				<alwaysShow>True</alwaysShow>
+				<def>Shell_Incendiary</def>
 			</li>
 			<li Class="CustomResourceReadout.ResourceReadoutLeaf">
 				<alwaysShow>True</alwaysShow>
